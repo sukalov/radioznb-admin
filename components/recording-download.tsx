@@ -1,17 +1,12 @@
 "use client";
 import { Download } from "lucide-react";
 
-export default function RecordingDownload({
-  recordingId,
-}: {
-  recordingId: string;
-}) {
+export default function RecordingDownload({ fileUrl }: { fileUrl: string }) {
   return (
     <button
       className="text-secondary hover:text-secondary-hover"
       onClick={() => {
-        return;
-        // window.open(url, "_blank");
+        window.open(fileUrl, "_blank");
       }}
     >
       <Download />

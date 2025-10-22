@@ -1,6 +1,6 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
-import "@/app/globals.css";
 import Header from "@/components/header";
+
+import "@/app/globals.css";
 
 const title = "библиотека радио знб";
 const description = "управление библиотекой";
@@ -17,13 +17,11 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-      <main className="w-full">
-        <Header />
-        <div className="container mx-auto p-4 max-w-3xl">
-
+    <main className="w-full">
+      <Header />
+      <div className="container mx-auto p-4 max-w-3xl">
         {children}
-
-        </div>
-      </main>
+      </div>
+    </main>
   );
 }

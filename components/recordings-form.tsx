@@ -11,6 +11,8 @@ import {
 import { getPrograms } from "@/lib/actions";
 import { getGenres } from "@/lib/actions";
 import { getPeople } from "@/lib/actions";
+import { generateSlug } from "@/lib/utils";
+import { Genre, Person, Program } from "@/db/schema";
 
 export default function RecordingsForm({
   editingId,
@@ -39,10 +41,15 @@ export default function RecordingsForm({
     fileUrl: "",
   });
   const audioFileRef = useRef<HTMLInputElement>(null);
+  const uploadDisabled =
+    isUploading ||
+    formData.programId == "" ||
+    formData.episodeTitle == "" ||
+    formData.fileUrl !== "";
 
-  const [programs, setPrograms] = useState<any[]>([]);
-  const [genres, setGenres] = useState<any[]>([]);
-  const [people, setPeople] = useState<any[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const [people, setPeople] = useState<Person[]>([]);
 
   // load initial data
   useEffect(() => {
@@ -59,7 +66,7 @@ export default function RecordingsForm({
         if (genresRes.success) setGenres(genresRes.data!);
         if (peopleRes.success) setPeople(peopleRes.data!);
       } catch (error) {
-        toast.error("не удалось загрузить данные");
+        toast.error("не удалось загрузить данные: " + error);
       } finally {
         setIsLoadingData(false);
       }
@@ -111,7 +118,12 @@ export default function RecordingsForm({
     });
   };
 
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = async (
+    file: File,
+    programId: string,
+    releaseDate: Date,
+    episodeTitle: string
+  ) => {
     if (
       !file.type.includes("audio/mpeg") &&
       !file.name.toLowerCase().endsWith(".mp3")
@@ -124,6 +136,7 @@ export default function RecordingsForm({
     try {
       const formDataUpload = new FormData();
       const uploadData = await fetch("/api/b2-upload-link");
+      const program = programs.find((p) => p.id === programId);
       const { uploadUrl, authorizationToken } = await uploadData.json();
       formDataUpload.append("file", file);
       const duration = await getAudioDuration(file);
@@ -136,12 +149,16 @@ export default function RecordingsForm({
         .map((b) => b.toString(16).padStart(2, "0"))
         .join("");
 
+      const newName = `${program?.slug}-${releaseDate
+        .toISOString()
+        .slice(0, 10)}-${generateSlug(episodeTitle)}.mp3`;
+
       // 2. upload raw file
       const response = await fetch(uploadUrl, {
         method: "POST",
         headers: {
           Authorization: authorizationToken,
-          "X-Bz-File-Name": encodeURIComponent(file.name),
+          "X-Bz-File-Name": encodeURIComponent(newName),
           "X-Bz-Content-Sha1": sha1Hex, // or 'do_not_verify'
           "Content-Type": file.type || "application/octet-stream",
         },
@@ -155,16 +172,14 @@ export default function RecordingsForm({
       const res = await response.json();
       console.log(res);
 
-      const { fileId } = await response.json();
-
       setFormData((prev) => ({
         ...prev,
-        fileUrl: fileId,
+        fileUrl: `https://f002.backblazeb2.com/file/radioznb/${res.fileName}.mp3`,
         duration: duration,
       }));
 
       toast.success("аудиофайл загружен успешно");
-      return fileId;
+      return res.fileName;
     } catch (error) {
       console.log(error);
       toast.error("не удалось загрузить аудиофайл: " + error);
@@ -369,23 +384,37 @@ export default function RecordingsForm({
         </div>
       </div>
 
-      <div>
+      <div
+        onClick={() => {
+          if (uploadDisabled) {
+            toast.info(
+              "сначала надо выбрать передачу и написать название выпуска"
+            );
+          }
+        }}
+      >
         <label className="block text-sm font-medium text-gray-700 mb-1">
           аудиофайл (mp3) *
         </label>
         {!formData.fileUrl && (
           <input
+            title="загрузка файла"
             ref={audioFileRef}
             type="file"
             required
+            disabled={uploadDisabled}
             accept=".mp3,audio/mpeg"
             onChange={async (e) => {
               const file = e.target.files?.[0];
               if (file) {
-                await handleFileUpload(file);
+                await handleFileUpload(
+                  file,
+                  formData.programId,
+                  formData.releaseDate,
+                  formData.episodeTitle
+                );
               }
             }}
-            disabled={isUploading}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           />
         )}

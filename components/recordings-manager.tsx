@@ -9,6 +9,7 @@ import { getRecordings } from "@/lib/actions";
 import RecordingDownload from "./recording-download";
 import RecordingsForm from "./recordings-form";
 import AddButton from "./add-button";
+import { Button } from "./ui/button";
 
 type RecordingWithProgram = Recording & {
   program?: string;
@@ -31,7 +32,7 @@ export function RecordingsManager() {
         toast.error(result.error);
       }
     } catch (error) {
-      toast.error("не удалось загрузить записи");
+      toast.error("не удалось загрузить записи: " + error);
     } finally {
       setIsLoading(false);
     }
@@ -177,7 +178,7 @@ export function RecordingsManager() {
                 </div>
                 <div className="flex-grow"></div>
                 <div className="text-right">
-                  <RecordingDownload recordingId={recording.id} />
+                  <RecordingDownload fileUrl={recording.fileUrl} />
                 </div>
               </div>
             </div>

@@ -2,13 +2,12 @@
 
 import { db } from "@/db";
 import { revalidatePath } from "next/cache";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import {
   recordings,
   recordingGenres,
   recordingPeople,
   type Recording,
-  type RecordingInsert,
 } from "@/db/schema";
 
 // ============================================================================
