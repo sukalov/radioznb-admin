@@ -32,7 +32,9 @@ export default function Header() {
       <nav className="flex justify-center mx-4 sm:mx-8 md:mx-12 lg:mx-24 text-xl">
         {tabs.map((tab) => (
           <Link key={tab.id} href={`/${tab.id}`}>
-            <Button variant="link">{tab.label}</Button>
+            <Button variant="link" className={`${
+              activeTab === tab.id ? "text-primary underline" : "text-gray-500"
+            }`}>{tab.label}</Button>
           </Link>
         ))}
       </nav>
