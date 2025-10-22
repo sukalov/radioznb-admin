@@ -13,6 +13,7 @@ import { getGenres } from "@/lib/actions";
 import { getPeople } from "@/lib/actions";
 import { generateSlug } from "@/lib/utils";
 import { Genre, Person, Program } from "@/db/schema";
+import { Button } from "./ui/button";
 
 export default function RecordingsForm({
   editingId,
@@ -303,7 +304,7 @@ export default function RecordingsForm({
             }
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           >
-            <option value="">Выберите программу</option>
+            <option value="">выберите программу</option>
             {programs.map((program) => (
               <option key={program.id} value={program.id}>
                 {program.name}
@@ -529,20 +530,17 @@ export default function RecordingsForm({
       </div>
 
       <div className="flex space-x-2">
-        <button
+        <Button
+          title="сохранить"
+          variant="default"
           type="submit"
           disabled={isUploading || isPending}
-          className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-hover disabled:opacity-50"
         >
           {editingId ? "обновить" : "создать"}
-        </button>
-        <button
-          type="button"
-          onClick={handleCancel}
-          className="px-4 py-2 rounded bg-white text-secondary border border-gray-200 font-semibold hover:bg-gray-50 hover:text-secondary-hover transition-colors shadow-sm hover:shadow"
-        >
+        </Button>
+        <Button type="button" onClick={handleCancel} variant="outline">
           отмена
-        </button>
+        </Button>
         &nbsp;
         {(isUploading || isPending) && (
           <div className="rounded-full h-4 w-4 border-b-2 border-primary animate-spin "></div>

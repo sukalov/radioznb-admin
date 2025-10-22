@@ -17,5 +17,3 @@ export async function createUser(username: string, password: string) {
 
   return await db.insert(users).values({ username: username, password: hash });
 }
-
-createUser('admin', 'test123');

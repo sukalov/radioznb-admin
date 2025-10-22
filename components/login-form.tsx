@@ -1,16 +1,28 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { signIn } from 'next-auth/react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-import { toast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { signIn } from "next-auth/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 const FormSchema = z.object({
   username: z.string(),
@@ -21,26 +33,22 @@ export default function LoginForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: '',
-      password: '',
+      username: "",
+      password: "",
     },
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const res = await signIn('credentials', {
+    const res = await signIn("credentials", {
       redirect: false,
       username: data.username,
       password: data.password,
     });
     if (res?.error) {
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description: (res as any).code,
-      });
-      form.setError('password', { type: 'manual', message: (res as any).code });
+      toast.error("уф что то пошло не так: " + res.error);
+      form.setError("password", { type: "manual", message: (res as any).code });
     } else {
-      window.location.href = '/';
+      window.location.href = "/";
     }
   }
 
@@ -73,9 +81,6 @@ export default function LoginForm() {
                   <FormItem>
                     <div className="flex items-center">
                       <FormLabel>пароль</FormLabel>
-                      {/* <Link href="#" className="ml-auto inline-block text-sm underline">
-                        Forgot your password?
-                      </Link> */}
                     </div>
 
                     <FormControl>
@@ -88,7 +93,6 @@ export default function LoginForm() {
               <Button type="submit" className="w-full">
                 войти
               </Button>
-
             </div>
           </form>
         </Form>

@@ -3,9 +3,10 @@
 import { useState, useEffect, useTransition } from "react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import AddButton from "@/components/add-button";
+import { Button } from "@/components/ui/button";
 import { getGenres, createGenre, deleteGenre } from "@/lib/actions";
 import type { Genre } from "@/db/schema";
+import { Card } from "./ui/card";
 
 export function GenresManager() {
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -89,31 +90,31 @@ export function GenresManager() {
             value={newGenreName}
             onChange={(e) => setNewGenreName(e.target.value)}
             placeholder="новый жанр"
-            className="flex-1 px-3 md:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1"
           />
-          <AddButton
-            type="submit"
-            disabled={!newGenreName || isPending}
-            style={{ opacity: !newGenreName || isPending ? 0.5 : 1 }}
-          />
+          <Button type="submit" disabled={!newGenreName || isPending}>
+            добавить
+          </Button>
         </form>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {genres.map((genre) => (
-          <div
+          <Card
             key={genre.id}
-            className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md"
+            className="flex items-center justify-between pl-5 pr-3 py-2"
           >
             <span className="text-sm font-medium">{genre.name}</span>
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => handleDelete(genre.id)}
-              className="text-red-600 hover:text-red-800 text-sm ml-2 disabled:opacity-50"
+              className="text-destructive hover:text-destructive text-sm ml-2 disabled:opacity-50"
               disabled={isPending}
             >
               ×
-            </button>
-          </div>
+            </Button>
+          </Card>
         ))}
         {genres.length === 0 && (
           <div className="col-span-full">

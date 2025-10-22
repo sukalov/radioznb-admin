@@ -45,7 +45,7 @@ CREATE TABLE `recordings` (
 	`duration` integer,
 	`status` text NOT NULL,
 	`keywords` text,
-	`audioFileId` text NOT NULL,
+	`fileUrl` text NOT NULL,
 	FOREIGN KEY (`programId`) REFERENCES `programs`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "b7b63802-db72-44d1-a716-23820923768e",
+  "id": "466d9254-5405-4e38-8ddb-7046ed824b4e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "genres": {
@@ -309,8 +309,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "audioFileId": {
-          "name": "audioFileId",
+        "fileUrl": {
+          "name": "fileUrl",
           "type": "text",
           "primaryKey": false,
           "notNull": true,

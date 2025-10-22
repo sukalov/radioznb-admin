@@ -185,8 +185,8 @@ export function RecordingsManager() {
           </div>
         ))}
         {recordings.length === 0 && (
-          <p className="text-gray-500 text-center py-8">
-            создайте свою первую запись!
+          <p className="text-muted-foreground text-center py-8">
+            нет файлов
           </p>
         )}
       </div>

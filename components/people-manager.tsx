@@ -11,6 +11,7 @@ import {
 } from "@/lib/actions";
 import type { Person } from "@/db/schema";
 import AddButton from "@/components/add-button";
+import { Button } from "./ui/button";
 
 export function PeopleManager() {
   const [people, setPeople] = useState<Person[]>([]);
@@ -171,20 +172,12 @@ export function PeopleManager() {
               />
             </div>
             <div className="flex space-x-2">
-              <button
-                type="submit"
-                disabled={isPending}
-                className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-hover disabled:opacity-50"
-              >
+              <Button variant="default" disabled={isPending}>
                 {editingId ? "обновить" : "создать"}
-              </button>
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="px-4 py-2 rounded bg-white text-secondary border border-gray-200 font-semibold hover:bg-gray-50 hover:text-secondary-hover transition-colors shadow-sm hover:shadow"
-              >
+              </Button>
+              <Button variant="outline" type="button" onClick={handleCancel}>
                 отмена
-              </button>
+              </Button>
             </div>
           </form>
         </div>
@@ -198,14 +191,14 @@ export function PeopleManager() {
               <div className="flex space-x-3 ml-4">
                 <button
                   onClick={() => handleEdit(person)}
-                  className="text-primary hover:text-primary-hover/80 text-sm"
+                  className="text-primary hover:text-primary/80 text-sm"
                   disabled={isPending}
                 >
                   <Edit />
                 </button>
                 <button
                   onClick={() => handleDelete(person.id)}
-                  className="text-red-600 hover:text-red-800 text-sm disabled:opacity-50"
+                  className="text-destructive hover:text-destructive/80 text-sm disabled:opacity-50"
                   disabled={isPending}
                 >
                   <Trash />
@@ -213,7 +206,7 @@ export function PeopleManager() {
               </div>
             </div>
             {person.telegramAccount && (
-              <p className="text-gray-600 text-sm">
+              <p className="text-muted-foreground text-sm">
                 <a
                   href={getTelegramUrl(person.telegramAccount)}
                   target="_blank"
@@ -228,9 +221,7 @@ export function PeopleManager() {
         ))}
         {people.length === 0 && (
           <div className="col-span-full">
-            <p className="text-secondary text-center py-8">
-              добавьте своего первого ведущего или гостя!
-            </p>
+            <p className="text-secondary text-center py-8">пусто</p>
           </div>
         )}
       </div>

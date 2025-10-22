@@ -13,6 +13,9 @@ import {
   deleteProgram,
 } from "@/lib/actions";
 import type { Program, Person } from "@/db/schema";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 
 type ProgramWithHost = Program & {
   host?: Person;
@@ -160,21 +163,20 @@ export function ProgramsManager() {
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-primary mb-1">
                 название *
               </label>
-              <input
+              <Input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-primary mb-1">
                 постоянный ведущий
               </label>
               <select
@@ -193,47 +195,37 @@ export function ProgramsManager() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-primary mb-1">
                 описание
               </label>
-              <textarea
+              <Textarea
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-primary mb-1">
                 короткий адрес страницы
               </label>
-              <input
+              <Input
                 type="text"
                 value={formData.slug}
                 onChange={(e) =>
                   setFormData({ ...formData, slug: e.target.value })
                 }
                 placeholder={generateSlug(formData.name)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div className="flex space-x-2">
-              <button
-                type="submit"
-                disabled={isPending}
-                className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-hover disabled:opacity-50"
-              >
+              <Button type="submit" disabled={isPending} variant="default">
                 {editingId ? "обновить" : "создать"}
-              </button>
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="px-4 py-2 rounded bg-white text-secondary border border-gray-200 font-semibold hover:bg-gray-50 hover:text-secondary-hover transition-colors shadow-sm hover:shadow"
-              >
+              </Button>
+              <Button type="button" onClick={handleCancel} variant="outline">
                 отмена
-              </button>
+              </Button>
             </div>
           </form>
         </div>
@@ -264,7 +256,7 @@ export function ProgramsManager() {
                 </button>
                 <button
                   onClick={() => handleDelete(program.id)}
-                  className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                  className="text-destructive hover:text-destructive/80 disabled:opacity-50"
                   disabled={isPending}
                 >
                   <Trash />

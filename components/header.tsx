@@ -24,7 +24,7 @@ export default function Header() {
           <h1 className="text-primary text-xl">библиотека зимы не будет</h1>
           <div className="ml-auto flex items-center space-x-4">
             <SessionProvider>
-              <Button onClick={() => signOut()}>выйти</Button>
+              <Button variant='outline' onClick={() => signOut()}>выйти</Button>
             </SessionProvider>
           </div>
         </div>
