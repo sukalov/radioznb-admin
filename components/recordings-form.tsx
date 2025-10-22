@@ -175,7 +175,7 @@ export default function RecordingsForm({
 
       setFormData((prev) => ({
         ...prev,
-        fileUrl: `https://f002.backblazeb2.com/file/radioznb/${res.fileName}.mp3`,
+        fileUrl: `https://f003.backblazeb2.com/file/radioznb/${res.fileName}`,
         duration: duration,
       }));
 
