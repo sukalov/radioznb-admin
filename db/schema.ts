@@ -11,8 +11,9 @@ export const users = sqliteTable("user", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  username: text("username"),
-  password: text("password"),
+  username: text("username").notNull(),
+  password: text("password").notNull(),
+  role: text("role", { enum: ["admin", "user"] }).$onUpdateFn(() => "user").notNull(),
 });
 
 export const sessions = sqliteTable("session", {
@@ -30,6 +31,9 @@ export const people = sqliteTable("people", {
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
   telegramAccount: text("telegramAccount"),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export const programs = sqliteTable("programs", {
@@ -40,6 +44,9 @@ export const programs = sqliteTable("programs", {
   description: text("description"),
   hostId: text("hostId").references(() => people.id),
   slug: text("slug").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export const genres = sqliteTable("genres", {
@@ -60,10 +67,13 @@ export const recordings = sqliteTable("recordings", {
   description: text("description"),
   type: text("type", { enum: ["live", "podcast"] }).notNull(),
   releaseDate: integer("releaseDate", { mode: "timestamp" }).notNull(),
-  duration: integer("duration"),
+  duration: integer("duration").notNull(),
   status: text("status", { enum: ["published", "hidden"] }).notNull(),
   keywords: text("keywords"),
   fileUrl: text("fileUrl").notNull(),
+  addedAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export const recordingGenres = sqliteTable(

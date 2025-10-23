@@ -6,7 +6,8 @@ CREATE TABLE `genres` (
 CREATE TABLE `people` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
-	`telegramAccount` text
+	`telegramAccount` text,
+	`createdAt` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `programs` (
@@ -15,6 +16,7 @@ CREATE TABLE `programs` (
 	`description` text,
 	`hostId` text,
 	`slug` text NOT NULL,
+	`createdAt` integer NOT NULL,
 	FOREIGN KEY (`hostId`) REFERENCES `people`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -42,10 +44,11 @@ CREATE TABLE `recordings` (
 	`description` text,
 	`type` text NOT NULL,
 	`releaseDate` integer NOT NULL,
-	`duration` integer,
+	`duration` integer NOT NULL,
 	`status` text NOT NULL,
 	`keywords` text,
 	`fileUrl` text NOT NULL,
+	`createdAt` integer NOT NULL,
 	FOREIGN KEY (`programId`) REFERENCES `programs`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -58,6 +61,7 @@ CREATE TABLE `session` (
 --> statement-breakpoint
 CREATE TABLE `user` (
 	`id` text PRIMARY KEY NOT NULL,
-	`username` text,
-	`password` text
+	`username` text NOT NULL,
+	`password` text NOT NULL,
+	`role` text NOT NULL
 );
