@@ -3,7 +3,11 @@
 import { getUser, createUser } from "@/actions/user";
 import { redirect } from "next/navigation";
 
-export async function register(data: { username: string; password: string }) {
+export async function register(data: {
+  username: string;
+  password: string;
+  role?: "admin" | "user";
+}) {
   let user = await getUser(data.username);
 
   if (user.length > 0) {
