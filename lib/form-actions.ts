@@ -24,7 +24,7 @@ export type RecordingFormData = {
   description?: string;
   type: "live" | "podcast";
   releaseDate: Date;
-  duration?: number;
+  duration: number;
   status: "published" | "hidden";
   keywords?: string;
   genreIds: string[];
@@ -63,7 +63,7 @@ export async function createRecordingWithRelations(
         description: formData.description || null,
         type: formData.type,
         releaseDate: formData.releaseDate,
-        duration: formData.duration || null,
+        duration: formData.duration,
         status: formData.status,
         keywords: formData.keywords || null,
         fileUrl: formData.fileUrl,
@@ -140,7 +140,7 @@ export async function updateRecordingWithRelations(
         description: formData.description || null,
         type: formData.type,
         releaseDate: formData.releaseDate,
-        duration: formData.duration || null,
+        duration: formData.duration,
         status: formData.status,
         keywords: formData.keywords || null,
         fileUrl: formData.fileUrl,
