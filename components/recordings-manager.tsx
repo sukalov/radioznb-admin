@@ -10,6 +10,7 @@ import RecordingDownload from "./recording-download";
 import RecordingsForm from "./recordings-form";
 import AddButton from "./add-button";
 import { Button } from "./ui/button";
+import { Card } from "./ui/card";
 
 type RecordingWithProgram = Recording & {
   program?: string;
@@ -108,33 +109,35 @@ export function RecordingsManager() {
 
       <div className="space-y-4">
         {recordings.map((recording) => (
-          <div key={recording.id} className="border rounded-lg p-4">
+          <Card key={recording.id} className="p-4">
             <div className="flex justify-between items-stretch">
               <div className="flex-1">
-                <div className="flex items-center space-x-2 mb-2">
+                <div className="flex items-center space-x-2 mb-2 flex-col sm:flex-row">
                   <h3 className="text-lg font-medium">
                     {recording.episodeTitle}
                   </h3>
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      recording.status === "published"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {recording.status === "published"
-                      ? "опубликовано"
-                      : "скрыто"}
-                  </span>
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      recording.type === "live"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-blue-100 text-primary"
-                    }`}
-                  >
-                    {recording.type === "live" ? "прямой эфир" : "подкаст"}
-                  </span>
+                  <div className="flex space-x-2">
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        recording.status === "published"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {recording.status === "published"
+                        ? "опубликовано"
+                        : "скрыто"}
+                    </span>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        recording.type === "live"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-blue-100 text-primary"
+                      }`}
+                    >
+                      {recording.type === "live" ? "прямой эфир" : "подкаст"}
+                    </span>
+                  </div>
                 </div>
                 {recording.program && (
                   <p className="text-gray-600 mb-1 text-lg">
@@ -182,12 +185,10 @@ export function RecordingsManager() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         ))}
         {recordings.length === 0 && (
-          <p className="text-muted-foreground text-center py-8">
-            нет файлов
-          </p>
+          <p className="text-muted-foreground text-center py-8">нет файлов</p>
         )}
       </div>
     </div>
