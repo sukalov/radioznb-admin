@@ -116,7 +116,7 @@ export function RecordingsManager() {
                   <h3 className="text-lg font-medium">
                     {recording.episodeTitle}
                   </h3>
-                  <div className="flex space-x-2">
+                  <div className="flex gap-2 py-1">
                     <span
                       className={`px-2 py-1 text-xs rounded-full ${
                         recording.status === "published"
