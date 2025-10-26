@@ -16,6 +16,7 @@ import type { Program, Person } from "@/db/schema";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
+import { useSession } from "next-auth/react";
 
 type ProgramWithHost = Program & {
   host?: Person;
@@ -34,6 +35,8 @@ export function ProgramsManager() {
     hostId: "",
     slug: "",
   });
+  const user = useSession({ required: true });
+  console.log(user);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -254,13 +257,15 @@ export function ProgramsManager() {
                 >
                   <Edit />
                 </button>
-                <button
-                  onClick={() => handleDelete(program.id)}
-                  className="text-destructive hover:text-destructive/80 disabled:opacity-50"
-                  disabled={isPending}
-                >
-                  <Trash />
-                </button>
+                {user.data?.user.role === "admin" && (
+                  <button
+                    onClick={() => handleDelete(program.id)}
+                    className="text-destructive hover:text-destructive/80 disabled:opacity-50"
+                    disabled={isPending}
+                  >
+                    <Trash />
+                  </button>
+                )}
               </div>
             </div>
           </div>

@@ -30,7 +30,12 @@ export const {
         if (user.length === 0 || !user[0].password)
           throw new InvalidLoginError();
         const passwordsMatch = await compare(password, user[0].password!);
-        if (passwordsMatch) return user[0] as User;
+        if (passwordsMatch) {
+					return {
+						id: user[0].id,
+						role: user[0].role,
+					} as User
+				}
         throw new InvalidLoginError();
       },
     }),

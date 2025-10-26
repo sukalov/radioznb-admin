@@ -12,6 +12,7 @@ import {
 import type { Person } from "@/db/schema";
 import AddButton from "@/components/add-button";
 import { Button } from "./ui/button";
+import { useSession } from "next-auth/react";
 
 export function PeopleManager() {
   const [people, setPeople] = useState<Person[]>([]);
@@ -23,6 +24,7 @@ export function PeopleManager() {
     name: "",
     telegramAccount: "",
   });
+  const user = useSession({ required: true });
 
   const loadPeople = async () => {
     setIsLoading(true);
@@ -196,13 +198,15 @@ export function PeopleManager() {
                 >
                   <Edit />
                 </button>
-                <button
-                  onClick={() => handleDelete(person.id)}
-                  className="text-destructive hover:text-destructive/80 text-sm disabled:opacity-50"
-                  disabled={isPending}
-                >
-                  <Trash />
-                </button>
+                {user.data?.user.role === "admin" && (
+                  <button
+                    onClick={() => handleDelete(person.id)}
+                    className="text-destructive hover:text-destructive/80 text-sm disabled:opacity-50"
+                    disabled={isPending}
+                  >
+                    <Trash />
+                  </button>
+                )}
               </div>
             </div>
             {person.telegramAccount && (

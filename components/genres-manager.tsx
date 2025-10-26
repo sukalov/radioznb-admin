@@ -7,12 +7,14 @@ import { Button } from "@/components/ui/button";
 import { getGenres, createGenre, deleteGenre } from "@/lib/actions";
 import type { Genre } from "@/db/schema";
 import { Card } from "./ui/card";
+import { useSession } from "next-auth/react";
 
 export function GenresManager() {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [newGenreName, setNewGenreName] = useState("");
+  const user = useSession({ required: true });
 
   const loadGenres = async () => {
     setIsLoading(true);
@@ -105,15 +107,17 @@ export function GenresManager() {
             className="flex items-center justify-between pl-5 pr-3 py-2"
           >
             <span className="text-sm font-medium">{genre.name}</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleDelete(genre.id)}
-              className="text-destructive hover:text-destructive text-sm ml-2 disabled:opacity-50"
-              disabled={isPending}
-            >
-              ×
-            </Button>
+            {user.data?.user.role === "admin" && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDelete(genre.id)}
+                className="text-destructive hover:text-destructive text-sm ml-2 disabled:opacity-50"
+                disabled={isPending}
+              >
+                ×
+              </Button>
+            )}
           </Card>
         ))}
         {genres.length === 0 && (

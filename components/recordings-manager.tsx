@@ -11,6 +11,7 @@ import RecordingsForm from "./recordings-form";
 import AddButton from "./add-button";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
+import { useSession } from "next-auth/react";
 
 type RecordingWithProgram = Recording & {
   program?: string;
@@ -22,6 +23,7 @@ export function RecordingsManager() {
   const [isPending, startTransition] = useTransition();
   const [isCreating, setIsCreating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const user = useSession({ required: true });
 
   const loadRecordings = async () => {
     setIsLoading(true);
@@ -171,13 +173,15 @@ export function RecordingsManager() {
                   >
                     <Edit />
                   </button>
-                  <button
-                    onClick={() => handleDelete(recording.id)}
-                    className="text-red-600 hover:text-red-800 disabled:opacity-50"
-                    disabled={isPending}
-                  >
-                    <Trash />
-                  </button>
+                  {user.data?.user.role === "admin" && (
+                    <button
+                      onClick={() => handleDelete(recording.id)}
+                      className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                      disabled={isPending}
+                    >
+                      <Trash />
+                    </button>
+                  )}
                 </div>
                 <div className="flex-grow"></div>
                 <div className="text-right">
