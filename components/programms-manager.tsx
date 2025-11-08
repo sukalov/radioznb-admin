@@ -160,8 +160,11 @@ export function ProgramsManager() {
       result = result.filter(
         (program) =>
           program.name.toLowerCase().includes(query) ||
-          program.description?.toLowerCase().includes(query) ||
-          program.host?.name.toLowerCase().includes(query),
+          program.description
+            ?.toLowerCase()
+            .replace("ё", "е")
+            .includes(query) ||
+          program.host?.name.toLowerCase().replace("ё", "е").includes(query)
       );
     }
 

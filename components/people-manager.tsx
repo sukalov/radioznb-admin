@@ -140,7 +140,7 @@ export function PeopleManager() {
       result = result.filter(
         (person) =>
           person.name.toLowerCase().includes(query) ||
-          person.telegramAccount?.toLowerCase().includes(query),
+          person.telegramAccount?.toLowerCase().replace("ё", "е").includes(query)
       );
     }
 

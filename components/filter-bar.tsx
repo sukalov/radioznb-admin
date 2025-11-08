@@ -35,7 +35,7 @@ export function FilterBar() {
         ([genresRes, programsRes]) => {
           if (genresRes.success) setGenres(genresRes.data!);
           if (programsRes.success) setPrograms(programsRes.data!);
-        },
+        }
       );
     }
   }, [activeTab]);
@@ -55,7 +55,11 @@ export function FilterBar() {
               type="text"
               placeholder="поиск..."
               value={filters.searchQuery}
-              onChange={(e) => updateFilters({ searchQuery: e.target.value })}
+              onChange={(e) =>
+                updateFilters({
+                  searchQuery: e.target.value.replace("ё", "е"),
+                })
+              }
               className="w-full"
             />
           </div>
