@@ -13,7 +13,9 @@ export const users = sqliteTable("user", {
     .$defaultFn(() => crypto.randomUUID()),
   username: text("username").notNull(),
   password: text("password").notNull(),
-  role: text("role", { enum: ["admin", "user"] }).$onUpdateFn(() => "user").notNull(),
+  role: text("role", { enum: ["admin", "user"] })
+    .$onUpdateFn(() => "user")
+    .notNull(),
 });
 
 export const sessions = sqliteTable("session", {
@@ -29,8 +31,8 @@ export const people = sqliteTable("people", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  name: text("name").notNull(),
-  telegramAccount: text("telegramAccount"),
+  name: text("name").notNull().unique(),
+  telegramAccount: text("telegramAccount").unique(),
   createdAt: integer("createdAt", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),
@@ -40,10 +42,10 @@ export const programs = sqliteTable("programs", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   description: text("description"),
   hostId: text("hostId").references(() => people.id),
-  slug: text("slug").notNull(),
+  slug: text("slug").notNull().unique(),
   createdAt: integer("createdAt", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),
@@ -53,7 +55,7 @@ export const genres = sqliteTable("genres", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
 });
 
 export const recordings = sqliteTable("recordings", {
@@ -70,7 +72,7 @@ export const recordings = sqliteTable("recordings", {
   duration: integer("duration").notNull(),
   status: text("status", { enum: ["published", "hidden"] }).notNull(),
   keywords: text("keywords"),
-  fileUrl: text("fileUrl").notNull(),
+  fileUrl: text("fileUrl").notNull().unique(),
   addedAt: integer("createdAt", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),
