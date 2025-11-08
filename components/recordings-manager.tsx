@@ -99,28 +99,28 @@ export function RecordingsManager() {
           recording.episodeTitle.toLowerCase().includes(query) ||
           recording.description?.toLowerCase().includes(query) ||
           recording.program?.toLowerCase().includes(query) ||
-          recording.keywords?.toLowerCase().includes(query)
+          recording.keywords?.toLowerCase().includes(query),
       );
     }
 
     // Type filter
     if (filters.recordingType !== "all") {
       result = result.filter(
-        (recording) => recording.type === filters.recordingType
+        (recording) => recording.type === filters.recordingType,
       );
     }
 
     // Status filter
     if (filters.recordingStatus !== "all") {
       result = result.filter(
-        (recording) => recording.status === filters.recordingStatus
+        (recording) => recording.status === filters.recordingStatus,
       );
     }
 
     // Program filter
     if (filters.selectedPrograms.length > 0) {
       result = result.filter((recording) =>
-        filters.selectedPrograms.includes(recording.programId)
+        filters.selectedPrograms.includes(recording.programId),
       );
     }
 
@@ -221,7 +221,7 @@ export function RecordingsManager() {
                   <p>
                     дата выхода:{" "}
                     {new Date(recording.releaseDate).toLocaleDateString(
-                      "ru-RU"
+                      "ru-RU",
                     )}
                   </p>
                   {recording.duration && (

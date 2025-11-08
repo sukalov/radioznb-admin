@@ -13,7 +13,7 @@ export async function getUser(username: string) {
 export async function createUser(
   username: string,
   password: string,
-  role?: "admin" | "user"
+  role?: "admin" | "user",
 ) {
   const salt = genSaltSync(10);
   const hash = hashSync(password, salt);

@@ -90,7 +90,7 @@ export const recordingGenres = sqliteTable(
   },
   (table) => ({
     pk: primaryKey({ columns: [table.recordingId, table.genreId] }),
-  })
+  }),
 );
 
 export const recordingPeople = sqliteTable(
@@ -106,7 +106,7 @@ export const recordingPeople = sqliteTable(
   },
   (table) => ({
     pk: primaryKey({ columns: [table.recordingId, table.personId] }),
-  })
+  }),
 );
 
 export type User = InferSelectModel<typeof users>;

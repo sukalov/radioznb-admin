@@ -123,7 +123,7 @@ export default function RecordingsForm({
     file: File,
     programId: string,
     releaseDate: Date,
-    episodeTitle: string
+    episodeTitle: string,
   ) => {
     if (
       !file.type.includes("audio/mpeg") &&
@@ -144,7 +144,7 @@ export default function RecordingsForm({
 
       const sha1Buffer = await crypto.subtle.digest(
         "SHA-1",
-        await file.arrayBuffer()
+        await file.arrayBuffer(),
       );
       const sha1Hex = [...new Uint8Array(sha1Buffer)]
         .map((b) => b.toString(16).padStart(2, "0"))
@@ -275,7 +275,7 @@ export default function RecordingsForm({
 
   const handleMultiSelect = (
     field: "genreIds" | "hosts" | "guests",
-    value: string
+    value: string,
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -389,7 +389,7 @@ export default function RecordingsForm({
         onClick={() => {
           if (uploadDisabled) {
             toast.info(
-              "сначала надо выбрать передачу и написать название выпуска"
+              "сначала надо выбрать передачу и написать название выпуска",
             );
           }
         }}
@@ -412,7 +412,7 @@ export default function RecordingsForm({
                   file,
                   formData.programId,
                   formData.releaseDate,
-                  formData.episodeTitle
+                  formData.episodeTitle,
                 );
               }
             }}

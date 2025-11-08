@@ -32,7 +32,7 @@ type ActionResult<T = void> =
 // ============================================================================
 
 export async function createUser(
-  data: UserInsert
+  data: UserInsert,
 ): Promise<ActionResult<{ id: string }>> {
   try {
     const [user] = await db.insert(users).values(data).returning();
@@ -49,7 +49,7 @@ export async function createUser(
 
 export async function updateUser(
   id: string,
-  data: UserInsert
+  data: UserInsert,
 ): Promise<ActionResult> {
   try {
     await db.update(users).set(data).where(eq(users.id, id));
@@ -124,7 +124,7 @@ export async function createSession(data: {
 }
 
 export async function deleteSession(
-  sessionToken: string
+  sessionToken: string,
 ): Promise<ActionResult> {
   try {
     await db.delete(sessions).where(eq(sessions.sessionToken, sessionToken));
@@ -158,7 +158,7 @@ export async function getSessionByToken(sessionToken: string) {
 // ============================================================================
 
 export async function createPerson(
-  data: PersonInsert
+  data: PersonInsert,
 ): Promise<ActionResult<{ id: string }>> {
   try {
     const [person] = await db.insert(people).values(data).returning();
@@ -175,7 +175,7 @@ export async function createPerson(
 
 export async function updatePerson(
   id: string,
-  data: PersonInsert
+  data: PersonInsert,
 ): Promise<ActionResult> {
   try {
     await db.update(people).set(data).where(eq(people.id, id));
@@ -233,7 +233,7 @@ export async function getPersonById(id: string) {
 // ============================================================================
 
 export async function createProgram(
-  data: ProgramInsert
+  data: ProgramInsert,
 ): Promise<ActionResult<{ id: string }>> {
   try {
     const [program] = await db.insert(programs).values(data).returning();
@@ -251,7 +251,7 @@ export async function createProgram(
 
 export async function updateProgram(
   id: string,
-  data: ProgramInsert
+  data: ProgramInsert,
 ): Promise<ActionResult> {
   try {
     await db.update(programs).set(data).where(eq(programs.id, id));
@@ -330,7 +330,7 @@ export async function getProgramBySlug(slug: string) {
 // ============================================================================
 
 export async function createGenre(
-  data: GenreInsert
+  data: GenreInsert,
 ): Promise<ActionResult<{ id: string }>> {
   try {
     const [genre] = await db.insert(genres).values(data).returning();
@@ -347,7 +347,7 @@ export async function createGenre(
 
 export async function updateGenre(
   id: string,
-  data: GenreInsert
+  data: GenreInsert,
 ): Promise<ActionResult> {
   try {
     await db.update(genres).set(data).where(eq(genres.id, id));
@@ -405,7 +405,7 @@ export async function getGenreById(id: string) {
 // ============================================================================
 
 export async function createRecording(
-  data: RecordingInsert
+  data: RecordingInsert,
 ): Promise<ActionResult<{ id: string }>> {
   try {
     const [recording] = await db.insert(recordings).values(data).returning();
@@ -423,7 +423,7 @@ export async function createRecording(
 
 export async function updateRecording(
   id: string,
-  data: RecordingInsert
+  data: RecordingInsert,
 ): Promise<ActionResult> {
   try {
     await db.update(recordings).set(data).where(eq(recordings.id, id));
@@ -537,7 +537,7 @@ export async function getRecordingsByStatus(status: "published" | "hidden") {
 
 export async function addGenreToRecording(
   recordingId: string,
-  genreId: string
+  genreId: string,
 ): Promise<ActionResult> {
   try {
     await db.insert(recordingGenres).values({
@@ -560,7 +560,7 @@ export async function addGenreToRecording(
 
 export async function removeGenreFromRecording(
   recordingId: string,
-  genreId: string
+  genreId: string,
 ): Promise<ActionResult> {
   try {
     await db
@@ -568,8 +568,8 @@ export async function removeGenreFromRecording(
       .where(
         and(
           eq(recordingGenres.recordingId, recordingId),
-          eq(recordingGenres.genreId, genreId)
-        )
+          eq(recordingGenres.genreId, genreId),
+        ),
       );
 
     revalidatePath("/admin/recordings");
@@ -603,7 +603,7 @@ export async function getGenresForRecording(recordingId: string) {
       error: error instanceof Error ? error.message : "failed to fetch genres",
     };
   }
-};
+}
 
 export async function getRecordingsForGenre(genreId: string) {
   try {
@@ -635,7 +635,7 @@ export async function getRecordingsForGenre(genreId: string) {
 export async function addPersonToRecording(
   recordingId: string,
   personId: string,
-  role: "host" | "guest"
+  role: "host" | "guest",
 ): Promise<ActionResult> {
   try {
     await db.insert(recordingPeople).values({
@@ -659,7 +659,7 @@ export async function addPersonToRecording(
 
 export async function removePersonFromRecording(
   recordingId: string,
-  personId: string
+  personId: string,
 ): Promise<ActionResult> {
   try {
     await db
@@ -667,8 +667,8 @@ export async function removePersonFromRecording(
       .where(
         and(
           eq(recordingPeople.recordingId, recordingId),
-          eq(recordingPeople.personId, personId)
-        )
+          eq(recordingPeople.personId, personId),
+        ),
       );
 
     revalidatePath("/admin/recordings");
@@ -687,7 +687,7 @@ export async function removePersonFromRecording(
 export async function updatePersonRoleInRecording(
   recordingId: string,
   personId: string,
-  role: "host" | "guest"
+  role: "host" | "guest",
 ): Promise<ActionResult> {
   try {
     await db
@@ -696,8 +696,8 @@ export async function updatePersonRoleInRecording(
       .where(
         and(
           eq(recordingPeople.recordingId, recordingId),
-          eq(recordingPeople.personId, personId)
-        )
+          eq(recordingPeople.personId, personId),
+        ),
       );
 
     revalidatePath("/admin/recordings");

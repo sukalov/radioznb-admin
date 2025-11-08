@@ -87,7 +87,7 @@ export function GenresManager() {
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
       result = result.filter((genre) =>
-        genre.name.toLowerCase().includes(query)
+        genre.name.toLowerCase().includes(query),
       );
     }
 

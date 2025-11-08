@@ -41,7 +41,7 @@ export type RecordingFormData = {
  * creates a new recording with all related genres and people
  */
 export async function createRecordingWithRelations(
-  formData: RecordingFormData
+  formData: RecordingFormData,
 ): Promise<ActionResult<{ id: string }>> {
   try {
     // validate no person is both host and guest
@@ -52,7 +52,7 @@ export async function createRecordingWithRelations(
         success: false,
         error: "человек не может быть одновременно ведущим и гостем",
       };
-    };
+    }
 
     // create recording
     const [recording] = await db
@@ -76,7 +76,7 @@ export async function createRecordingWithRelations(
         formData.genreIds.map((genreId) => ({
           recordingId: recording.id,
           genreId,
-        }))
+        })),
       );
     }
 
@@ -87,7 +87,7 @@ export async function createRecordingWithRelations(
           recordingId: recording.id,
           personId,
           role: "host" as const,
-        }))
+        })),
       );
     }
 
@@ -98,7 +98,7 @@ export async function createRecordingWithRelations(
           recordingId: recording.id,
           personId,
           role: "guest" as const,
-        }))
+        })),
       );
     }
 
@@ -118,7 +118,7 @@ export async function createRecordingWithRelations(
  */
 export async function updateRecordingWithRelations(
   id: string,
-  formData: RecordingFormData
+  formData: RecordingFormData,
 ): Promise<ActionResult> {
   try {
     // validate no person is both host and guest
@@ -157,7 +157,7 @@ export async function updateRecordingWithRelations(
         formData.genreIds.map((genreId) => ({
           recordingId: id,
           genreId,
-        }))
+        })),
       );
     }
 
@@ -168,7 +168,7 @@ export async function updateRecordingWithRelations(
           recordingId: id,
           personId,
           role: "host" as const,
-        }))
+        })),
       );
     }
 
@@ -179,7 +179,7 @@ export async function updateRecordingWithRelations(
           recordingId: id,
           personId,
           role: "guest" as const,
-        }))
+        })),
       );
     }
 
@@ -262,7 +262,7 @@ export async function getRecordingForForm(id: string): Promise<
  * deletes a recording and all its relations (cascade handled by db)
  */
 export async function deleteRecordingWithRelations(
-  id: string
+  id: string,
 ): Promise<ActionResult> {
   try {
     await db.delete(recordings).where(eq(recordings.id, id));

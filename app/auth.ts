@@ -31,11 +31,11 @@ export const {
           throw new InvalidLoginError();
         const passwordsMatch = await compare(password, user[0].password!);
         if (passwordsMatch) {
-					return {
-						id: user[0].id,
-						role: user[0].role,
-					} as User
-				}
+          return {
+            id: user[0].id,
+            role: user[0].role,
+          } as User;
+        }
         throw new InvalidLoginError();
       },
     }),

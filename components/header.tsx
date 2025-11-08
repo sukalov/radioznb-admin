@@ -24,7 +24,9 @@ export default function Header() {
           <h1 className="text-primary text-xl">библиотека зимы не будет</h1>
           <div className="ml-auto flex items-center space-x-4">
             <SessionProvider>
-              <Button variant='outline' onClick={() => signOut()}>выйти</Button>
+              <Button variant="outline" onClick={() => signOut()}>
+                выйти
+              </Button>
             </SessionProvider>
           </div>
         </div>
@@ -32,9 +34,16 @@ export default function Header() {
       <nav className="flex justify-center mx-4 sm:mx-8 md:mx-12 lg:mx-24 text-xl">
         {tabs.map((tab) => (
           <Link key={tab.id} href={`/${tab.id}`}>
-            <Button variant="link" className={`${
-              activeTab === tab.id ? "text-primary underline" : "text-gray-500"
-            }`}>{tab.label}</Button>
+            <Button
+              variant="link"
+              className={`${
+                activeTab === tab.id
+                  ? "text-primary underline"
+                  : "text-gray-500"
+              }`}
+            >
+              {tab.label}
+            </Button>
           </Link>
         ))}
       </nav>

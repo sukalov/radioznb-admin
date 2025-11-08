@@ -35,7 +35,7 @@ export function FilterBar() {
         ([genresRes, programsRes]) => {
           if (genresRes.success) setGenres(genresRes.data!);
           if (programsRes.success) setPrograms(programsRes.data!);
-        }
+        },
       );
     }
   }, [activeTab]);

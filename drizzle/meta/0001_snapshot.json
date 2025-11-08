@@ -25,9 +25,7 @@
       "indexes": {
         "genres_name_unique": {
           "name": "genres_name_unique",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": true
         }
       },
@@ -71,16 +69,12 @@
       "indexes": {
         "people_name_unique": {
           "name": "people_name_unique",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": true
         },
         "people_telegramAccount_unique": {
           "name": "people_telegramAccount_unique",
-          "columns": [
-            "telegramAccount"
-          ],
+          "columns": ["telegramAccount"],
           "isUnique": true
         }
       },
@@ -138,16 +132,12 @@
       "indexes": {
         "programs_name_unique": {
           "name": "programs_name_unique",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": true
         },
         "programs_slug_unique": {
           "name": "programs_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -156,12 +146,8 @@
           "name": "programs_hostId_people_id_fk",
           "tableFrom": "programs",
           "tableTo": "people",
-          "columnsFrom": [
-            "hostId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["hostId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -194,12 +180,8 @@
           "name": "recordingGenres_recordingId_recordings_id_fk",
           "tableFrom": "recordingGenres",
           "tableTo": "recordings",
-          "columnsFrom": [
-            "recordingId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["recordingId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -207,22 +189,15 @@
           "name": "recordingGenres_genreId_genres_id_fk",
           "tableFrom": "recordingGenres",
           "tableTo": "genres",
-          "columnsFrom": [
-            "genreId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["genreId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "recordingGenres_recordingId_genreId_pk": {
-          "columns": [
-            "recordingId",
-            "genreId"
-          ],
+          "columns": ["recordingId", "genreId"],
           "name": "recordingGenres_recordingId_genreId_pk"
         }
       },
@@ -260,12 +235,8 @@
           "name": "recordingPeople_recordingId_recordings_id_fk",
           "tableFrom": "recordingPeople",
           "tableTo": "recordings",
-          "columnsFrom": [
-            "recordingId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["recordingId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -273,22 +244,15 @@
           "name": "recordingPeople_personId_people_id_fk",
           "tableFrom": "recordingPeople",
           "tableTo": "people",
-          "columnsFrom": [
-            "personId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["personId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "recordingPeople_recordingId_personId_pk": {
-          "columns": [
-            "recordingId",
-            "personId"
-          ],
+          "columns": ["recordingId", "personId"],
           "name": "recordingPeople_recordingId_personId_pk"
         }
       },
@@ -379,9 +343,7 @@
       "indexes": {
         "recordings_fileUrl_unique": {
           "name": "recordings_fileUrl_unique",
-          "columns": [
-            "fileUrl"
-          ],
+          "columns": ["fileUrl"],
           "isUnique": true
         }
       },
@@ -390,12 +352,8 @@
           "name": "recordings_programId_programs_id_fk",
           "tableFrom": "recordings",
           "tableTo": "programs",
-          "columnsFrom": [
-            "programId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["programId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -435,12 +393,8 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

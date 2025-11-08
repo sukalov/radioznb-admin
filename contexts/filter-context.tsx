@@ -8,21 +8,21 @@ export interface FilterState {
   // Common filters
   searchQuery: string;
   sortBy: SortOption;
-  
+
   // Programs filters
   programsWithHost: boolean;
   programsWithoutHost: boolean;
-  
+
   // People filters
   peopleWithTelegram: boolean;
   peopleWithoutTelegram: boolean;
-  
+
   // Recordings filters
   recordingType: "all" | "live" | "podcast";
   recordingStatus: "all" | "published" | "hidden";
   selectedGenres: string[];
   selectedPrograms: string[];
-  
+
   // Genres filters (minimal, just search)
 }
 
@@ -100,4 +100,3 @@ export function useFilters() {
   }
   return context;
 }
-

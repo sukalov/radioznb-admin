@@ -23,9 +23,7 @@ export default function AdminLayout({
       <main className="w-full">
         <Header />
         <FilterBar />
-        <div className="container mx-auto p-4 max-w-3xl">
-          {children}
-        </div>
+        <div className="container mx-auto p-4 max-w-3xl">{children}</div>
       </main>
     </FilterProvider>
   );

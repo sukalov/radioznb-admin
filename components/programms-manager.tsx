@@ -161,7 +161,7 @@ export function ProgramsManager() {
         (program) =>
           program.name.toLowerCase().includes(query) ||
           program.description?.toLowerCase().includes(query) ||
-          program.host?.name.toLowerCase().includes(query)
+          program.host?.name.toLowerCase().includes(query),
       );
     }
 
