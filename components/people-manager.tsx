@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition, useMemo } from "react";
+import { useState, useEffect, useTransition, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { Edit, Trash } from "lucide-react";
 import {
@@ -27,6 +27,7 @@ export function PeopleManager() {
   });
   const user = useSession({ required: true });
   const { filters } = useFilters();
+  const formRef = useRef<HTMLDivElement>(null);
 
   const loadPeople = async () => {
     setIsLoading(true);
@@ -99,6 +100,15 @@ export function PeopleManager() {
       telegramAccount: person.telegramAccount || "",
     });
     setIsCreating(true);
+
+    // Scroll to form with offset for filter bar
+    setTimeout(() => {
+      if (formRef.current) {
+        const yOffset = -120; // Offset for filter bar + some padding
+        const y = formRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -140,7 +150,10 @@ export function PeopleManager() {
       result = result.filter(
         (person) =>
           person.name.toLowerCase().includes(query) ||
-          person.telegramAccount?.toLowerCase().replace("ё", "е").includes(query)
+          person.telegramAccount
+            ?.toLowerCase()
+            .replace("ё", "е")
+            .includes(query)
       );
     }
 
@@ -192,7 +205,7 @@ export function PeopleManager() {
       </div>
 
       {isCreating && (
-        <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+        <div ref={formRef} className="mb-6 p-4 border rounded-lg bg-gray-50">
           <h3 className="text-lg font-medium mb-4">
             {editingId ? "редактор" : "добавить ведущего или гостя"}
           </h3>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Edit, Trash } from "lucide-react";
-import { useState, useEffect, useTransition, useMemo } from "react";
+import { useState, useEffect, useTransition, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { deleteRecordingWithRelations } from "@/lib/form-actions";
 import type { Recording } from "@/db/schema";
@@ -28,6 +28,7 @@ export function RecordingsManager() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const user = useSession({ required: true });
   const { filters } = useFilters();
+  const formRef = useRef<HTMLDivElement>(null);
 
   const loadRecordings = async () => {
     setIsLoading(true);
@@ -59,6 +60,15 @@ export function RecordingsManager() {
   const handleEdit = (recording: RecordingWithProgram) => {
     setEditingId(recording.id);
     setIsCreating(true);
+
+    // Scroll to form with offset for filter bar
+    setTimeout(() => {
+      if (formRef.current) {
+        const yOffset = -120; // Offset for filter bar + some padding
+        const y = formRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -182,7 +192,7 @@ export function RecordingsManager() {
       </div>
 
       {isCreating && (
-        <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+        <div ref={formRef} className="mb-6 p-4 border rounded-lg bg-gray-50">
           <h3 className="text-lg font-medium mb-4">
             {editingId ? "редактор" : "новый файл"}
           </h3>
