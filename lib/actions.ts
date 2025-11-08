@@ -456,7 +456,23 @@ export async function deleteRecording(id: string): Promise<ActionResult> {
 
 export async function getRecordings() {
   try {
-    const allRecordings = await db.select().from(recordings);
+    const allRecordings = await db
+      .select({
+        id: recordings.id,
+        programId: recordings.programId,
+        episodeTitle: recordings.episodeTitle,
+        description: recordings.description,
+        type: recordings.type,
+        releaseDate: recordings.releaseDate,
+        duration: recordings.duration,
+        status: recordings.status,
+        keywords: recordings.keywords,
+        fileUrl: recordings.fileUrl,
+        addedAt: recordings.addedAt,
+        program: programs.name,
+      })
+      .from(recordings)
+      .leftJoin(programs, eq(recordings.programId, programs.id));
     return { success: true, data: allRecordings };
   } catch (error) {
     return {

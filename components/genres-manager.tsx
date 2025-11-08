@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useMemo } from "react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { getGenres, createGenre, deleteGenre } from "@/lib/actions";
 import type { Genre } from "@/db/schema";
 import { Card } from "./ui/card";
 import { useSession } from "next-auth/react";
+import { useFilters } from "@/contexts/filter-context";
 
 export function GenresManager() {
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -15,6 +16,7 @@ export function GenresManager() {
   const [isPending, startTransition] = useTransition();
   const [newGenreName, setNewGenreName] = useState("");
   const user = useSession({ required: true });
+  const { filters } = useFilters();
 
   const loadGenres = async () => {
     setIsLoading(true);
@@ -77,6 +79,33 @@ export function GenresManager() {
     }
   };
 
+  // Apply filters and sorting
+  const filteredGenres = useMemo(() => {
+    let result = [...genres];
+
+    // Search filter
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      result = result.filter((genre) =>
+        genre.name.toLowerCase().includes(query)
+      );
+    }
+
+    // Sorting (genres don't have dates, so only name sorting)
+    result.sort((a, b) => {
+      switch (filters.sortBy) {
+        case "name-asc":
+          return a.name.localeCompare(b.name, "ru");
+        case "name-desc":
+          return b.name.localeCompare(a.name, "ru");
+        default:
+          return a.name.localeCompare(b.name, "ru");
+      }
+    });
+
+    return result;
+  }, [genres, filters]);
+
   if (isLoading) {
     return <div className="p-6">загрузка жанров...</div>;
   }
@@ -101,7 +130,7 @@ export function GenresManager() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {genres.map((genre) => (
+        {filteredGenres.map((genre) => (
           <Card
             key={genre.id}
             className="flex items-center justify-between pl-5 pr-3 py-2"
@@ -120,9 +149,13 @@ export function GenresManager() {
             )}
           </Card>
         ))}
-        {genres.length === 0 && (
+        {filteredGenres.length === 0 && (
           <div className="col-span-full">
-            <p className="text-gray-500 text-center py-8">жанры не найдены</p>
+            <p className="text-gray-500 text-center py-8">
+              {genres.length === 0
+                ? "жанры не найдены"
+                : "нет жанров, соответствующих фильтрам"}
+            </p>
           </div>
         )}
       </div>

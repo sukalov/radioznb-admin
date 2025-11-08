@@ -2,7 +2,7 @@
 
 import { generateSlug } from "@/lib/utils";
 import { Edit, Trash } from "lucide-react";
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useMemo } from "react";
 import { toast } from "sonner";
 import AddButton from "@/components/add-button";
 import {
@@ -17,6 +17,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { useSession } from "next-auth/react";
+import { useFilters } from "@/contexts/filter-context";
 
 type ProgramWithHost = Program & {
   host?: Person;
@@ -36,7 +37,7 @@ export function ProgramsManager() {
     slug: "",
   });
   const user = useSession({ required: true });
-  console.log(user);
+  const { filters } = useFilters();
 
   const loadData = async () => {
     setIsLoading(true);
@@ -149,6 +150,51 @@ export function ProgramsManager() {
     setFormData({ name: "", description: "", hostId: "", slug: "" });
   };
 
+  // Apply filters and sorting
+  const filteredPrograms = useMemo(() => {
+    let result = [...programs];
+
+    // Search filter
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      result = result.filter(
+        (program) =>
+          program.name.toLowerCase().includes(query) ||
+          program.description?.toLowerCase().includes(query) ||
+          program.host?.name.toLowerCase().includes(query)
+      );
+    }
+
+    // Host filters
+    if (filters.programsWithHost && !filters.programsWithoutHost) {
+      result = result.filter((program) => program.hostId);
+    } else if (filters.programsWithoutHost && !filters.programsWithHost) {
+      result = result.filter((program) => !program.hostId);
+    }
+
+    // Sorting
+    result.sort((a, b) => {
+      switch (filters.sortBy) {
+        case "name-asc":
+          return a.name.localeCompare(b.name, "ru");
+        case "name-desc":
+          return b.name.localeCompare(a.name, "ru");
+        case "date-asc":
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        case "date-desc":
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  }, [programs, filters]);
+
   if (isLoading) {
     return <div className="p-6">загрузка передач...</div>;
   }
@@ -235,7 +281,7 @@ export function ProgramsManager() {
       )}
 
       <div className="space-y-4">
-        {programs.map((program) => (
+        {filteredPrograms.map((program) => (
           <div key={program.id} className="border rounded-lg p-4">
             <div className="flex justify-between items-start">
               <div className="flex-1">
@@ -270,9 +316,11 @@ export function ProgramsManager() {
             </div>
           </div>
         ))}
-        {programs.length === 0 && (
+        {filteredPrograms.length === 0 && (
           <p className="text-gray-500 text-center py-8">
-            программы не найдены. создайте свою первую программу!
+            {programs.length === 0
+              ? "программы не найдены. создайте свою первую программу!"
+              : "нет программ, соответствующих фильтрам"}
           </p>
         )}
       </div>

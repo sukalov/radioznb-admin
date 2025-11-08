@@ -1,4 +1,6 @@
 import Header from "@/components/header";
+import { FilterBar } from "@/components/filter-bar";
+import { FilterProvider } from "@/contexts/filter-context";
 
 import "@/app/globals.css";
 
@@ -17,11 +19,14 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="w-full">
-      <Header />
-      <div className="container mx-auto p-4 max-w-3xl">
-        {children}
-      </div>
-    </main>
+    <FilterProvider>
+      <main className="w-full">
+        <Header />
+        <FilterBar />
+        <div className="container mx-auto p-4 max-w-3xl">
+          {children}
+        </div>
+      </main>
+    </FilterProvider>
   );
 }

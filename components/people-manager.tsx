@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useMemo } from "react";
 import { toast } from "sonner";
 import { Edit, Trash } from "lucide-react";
 import {
@@ -13,6 +13,7 @@ import type { Person } from "@/db/schema";
 import AddButton from "@/components/add-button";
 import { Button } from "./ui/button";
 import { useSession } from "next-auth/react";
+import { useFilters } from "@/contexts/filter-context";
 
 export function PeopleManager() {
   const [people, setPeople] = useState<Person[]>([]);
@@ -25,6 +26,7 @@ export function PeopleManager() {
     telegramAccount: "",
   });
   const user = useSession({ required: true });
+  const { filters } = useFilters();
 
   const loadPeople = async () => {
     setIsLoading(true);
@@ -128,6 +130,50 @@ export function PeopleManager() {
     return `https://t.me/${username}`;
   };
 
+  // Apply filters and sorting
+  const filteredPeople = useMemo(() => {
+    let result = [...people];
+
+    // Search filter
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      result = result.filter(
+        (person) =>
+          person.name.toLowerCase().includes(query) ||
+          person.telegramAccount?.toLowerCase().includes(query)
+      );
+    }
+
+    // Telegram filters
+    if (filters.peopleWithTelegram && !filters.peopleWithoutTelegram) {
+      result = result.filter((person) => person.telegramAccount);
+    } else if (filters.peopleWithoutTelegram && !filters.peopleWithTelegram) {
+      result = result.filter((person) => !person.telegramAccount);
+    }
+
+    // Sorting
+    result.sort((a, b) => {
+      switch (filters.sortBy) {
+        case "name-asc":
+          return a.name.localeCompare(b.name, "ru");
+        case "name-desc":
+          return b.name.localeCompare(a.name, "ru");
+        case "date-asc":
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        case "date-desc":
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  }, [people, filters]);
+
   if (isLoading) {
     return <div className="p-6">загрузка людей...</div>;
   }
@@ -186,7 +232,7 @@ export function PeopleManager() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {people.map((person) => (
+        {filteredPeople.map((person) => (
           <div key={person.id} className="border rounded-lg p-4">
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-lg font-medium">{person.name}</h3>
@@ -223,9 +269,13 @@ export function PeopleManager() {
             )}
           </div>
         ))}
-        {people.length === 0 && (
+        {filteredPeople.length === 0 && (
           <div className="col-span-full">
-            <p className="text-secondary text-center py-8">пусто</p>
+            <p className="text-secondary text-center py-8">
+              {people.length === 0
+                ? "пусто"
+                : "нет людей, соответствующих фильтрам"}
+            </p>
           </div>
         )}
       </div>

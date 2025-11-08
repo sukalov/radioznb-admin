@@ -1,7 +1,7 @@
 "use client";
 
 import { Edit, Trash } from "lucide-react";
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useMemo } from "react";
 import { toast } from "sonner";
 import { deleteRecordingWithRelations } from "@/lib/form-actions";
 import type { Recording } from "@/db/schema";
@@ -12,9 +12,10 @@ import AddButton from "./add-button";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { useSession } from "next-auth/react";
+import { useFilters } from "@/contexts/filter-context";
 
 type RecordingWithProgram = Recording & {
-  program?: string;
+  program?: string | null;
 };
 
 export function RecordingsManager() {
@@ -24,6 +25,7 @@ export function RecordingsManager() {
   const [isCreating, setIsCreating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const user = useSession({ required: true });
+  const { filters } = useFilters();
 
   const loadRecordings = async () => {
     setIsLoading(true);
@@ -85,6 +87,72 @@ export function RecordingsManager() {
       .padStart(2, "0")}`;
   }
 
+  // Apply filters and sorting
+  const filteredRecordings = useMemo(() => {
+    let result = [...recordings];
+
+    // Search filter
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      result = result.filter(
+        (recording) =>
+          recording.episodeTitle.toLowerCase().includes(query) ||
+          recording.description?.toLowerCase().includes(query) ||
+          recording.program?.toLowerCase().includes(query) ||
+          recording.keywords?.toLowerCase().includes(query)
+      );
+    }
+
+    // Type filter
+    if (filters.recordingType !== "all") {
+      result = result.filter(
+        (recording) => recording.type === filters.recordingType
+      );
+    }
+
+    // Status filter
+    if (filters.recordingStatus !== "all") {
+      result = result.filter(
+        (recording) => recording.status === filters.recordingStatus
+      );
+    }
+
+    // Program filter
+    if (filters.selectedPrograms.length > 0) {
+      result = result.filter((recording) =>
+        filters.selectedPrograms.includes(recording.programId)
+      );
+    }
+
+    // Genre filter - Note: This requires additional data from the junction table
+    // For now, we'll skip this as it requires a more complex query
+    // You may want to enhance getRecordings to include genre information
+
+    // Sorting
+    result.sort((a, b) => {
+      switch (filters.sortBy) {
+        case "name-asc":
+          return a.episodeTitle.localeCompare(b.episodeTitle, "ru");
+        case "name-desc":
+          return b.episodeTitle.localeCompare(a.episodeTitle, "ru");
+        case "date-asc":
+          return (
+            new Date(a.releaseDate).getTime() -
+            new Date(b.releaseDate).getTime()
+          );
+        case "date-desc":
+          return (
+            new Date(b.releaseDate).getTime() -
+            new Date(a.releaseDate).getTime()
+          );
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  }, [recordings, filters]);
+
   if (isLoading) {
     return <div className="p-6">загрузка файлов...</div>;
   }
@@ -110,7 +178,7 @@ export function RecordingsManager() {
       )}
 
       <div className="space-y-4">
-        {recordings.map((recording) => (
+        {filteredRecordings.map((recording) => (
           <Card key={recording.id} className="p-4">
             <div className="flex justify-between items-stretch">
               <div className="flex-1">
@@ -191,8 +259,12 @@ export function RecordingsManager() {
             </div>
           </Card>
         ))}
-        {recordings.length === 0 && (
-          <p className="text-muted-foreground text-center py-8">нет файлов</p>
+        {filteredRecordings.length === 0 && (
+          <p className="text-muted-foreground text-center py-8">
+            {recordings.length === 0
+              ? "нет файлов"
+              : "нет файлов, соответствующих фильтрам"}
+          </p>
         )}
       </div>
     </div>
