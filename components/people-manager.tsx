@@ -39,6 +39,7 @@ export function PeopleManager() {
         toast.error(result.error);
       }
     } catch (error) {
+      console.log(error);
       toast.error("не удалось загрузить данные");
     } finally {
       setIsLoading(false);

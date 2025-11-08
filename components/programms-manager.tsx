@@ -49,7 +49,12 @@ export function ProgramsManager() {
       ]);
 
       if (programsRes.success) {
-        setPrograms(programsRes.data!);
+        setPrograms(
+          programsRes.data!.map((program) => ({
+            ...program,
+            host: program.host ?? undefined,
+          }))
+        );
       } else {
         toast.error(programsRes.error);
       }
@@ -60,6 +65,7 @@ export function ProgramsManager() {
         toast.error(peopleRes.error);
       }
     } catch (error) {
+      console.log(error);
       toast.error("не удалось загрузить данные");
     } finally {
       setIsLoading(false);
@@ -129,7 +135,10 @@ export function ProgramsManager() {
     setTimeout(() => {
       if (formRef.current) {
         const yOffset = -120; // Offset for filter bar + some padding
-        const y = formRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        const y =
+          formRef.current.getBoundingClientRect().top +
+          window.pageYOffset +
+          yOffset;
         window.scrollTo({ top: y, behavior: "smooth" });
       }
     }, 100);
@@ -306,8 +315,8 @@ export function ProgramsManager() {
               <div className="flex-1">
                 <h3 className="text-lg font-medium">{program.name}</h3>
                 {program.host && (
-                  <p className="text-gray-600 mt-1">
-                    ведущий: {program.host.name}
+                  <p className="text-muted-foreground text-sm mt-1">
+                    автор: {program.host.name}
                   </p>
                 )}
                 {program.description && (

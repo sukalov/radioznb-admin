@@ -1,7 +1,7 @@
 //auth-config.ts
 import { DefaultSession, NextAuthConfig } from "next-auth";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { db } from "@/db";
+// Import to enable module augmentation
+import "@auth/core/jwt";
 
 export const authConfig = {
   pages: {

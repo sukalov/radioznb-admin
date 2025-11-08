@@ -284,7 +284,18 @@ export async function deleteProgram(id: string): Promise<ActionResult> {
 
 export async function getPrograms() {
   try {
-    const allPrograms = await db.select().from(programs);
+    const allPrograms = await db
+      .select({
+        id: programs.id,
+        name: programs.name,
+        description: programs.description,
+        slug: programs.slug,
+        hostId: programs.hostId,
+        createdAt: programs.createdAt,
+        host: people,
+      })
+      .from(programs)
+      .leftJoin(people, eq(programs.hostId, people.id));
     return { success: true, data: allPrograms };
   } catch (error) {
     return {
