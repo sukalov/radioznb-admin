@@ -91,13 +91,17 @@ export function GenresManager() {
       );
     }
 
-    // Sorting (genres don't have dates, so only name sorting)
+    // Sorting
     result.sort((a, b) => {
       switch (filters.sortBy) {
         case "name-asc":
           return a.name.localeCompare(b.name, "ru");
         case "name-desc":
           return b.name.localeCompare(a.name, "ru");
+        case "date-asc":
+        case "date-desc":
+          // Genres don't have dates, fallback to name sorting
+          return a.name.localeCompare(b.name, "ru");
         default:
           return a.name.localeCompare(b.name, "ru");
       }

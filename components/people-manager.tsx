@@ -144,12 +144,18 @@ export function PeopleManager() {
       );
     }
 
-    // Telegram filters
-    if (filters.peopleWithTelegram && !filters.peopleWithoutTelegram) {
-      result = result.filter((person) => person.telegramAccount);
-    } else if (filters.peopleWithoutTelegram && !filters.peopleWithTelegram) {
+    // Telegram filters (inverted logic: ON = exclude, OFF = include)
+    // If both are OFF, show nothing
+    if (!filters.peopleWithTelegram && !filters.peopleWithoutTelegram) {
+      result = [];
+    } else if (!filters.peopleWithTelegram) {
+      // Exclude people with telegram
       result = result.filter((person) => !person.telegramAccount);
+    } else if (!filters.peopleWithoutTelegram) {
+      // Exclude people without telegram
+      result = result.filter((person) => person.telegramAccount);
     }
+    // If both are ON, show all (no filtering)
 
     // Sorting
     result.sort((a, b) => {
@@ -271,7 +277,7 @@ export function PeopleManager() {
         ))}
         {filteredPeople.length === 0 && (
           <div className="col-span-full">
-            <p className="text-secondary text-center py-8">
+            <p className="text-muted-foreground text-center py-8">
               {people.length === 0
                 ? "пусто"
                 : "нет людей, соответствующих фильтрам"}

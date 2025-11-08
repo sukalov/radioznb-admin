@@ -473,7 +473,43 @@ export async function getRecordings() {
       })
       .from(recordings)
       .leftJoin(programs, eq(recordings.programId, programs.id));
-    return { success: true, data: allRecordings };
+
+    // Get people and genres for each recording
+    const recordingsWithRelations = await Promise.all(
+      allRecordings.map(async (recording) => {
+        // Get people
+        const peopleList = await db
+          .select({
+            personName: people.name,
+            role: recordingPeople.role,
+          })
+          .from(recordingPeople)
+          .innerJoin(people, eq(recordingPeople.personId, people.id))
+          .where(eq(recordingPeople.recordingId, recording.id));
+
+        const peopleNames = peopleList.map((p) => p.personName).join(", ");
+
+        // Get genres
+        const genresList = await db
+          .select({
+            genreId: genres.id,
+            genreName: genres.name,
+          })
+          .from(recordingGenres)
+          .innerJoin(genres, eq(recordingGenres.genreId, genres.id))
+          .where(eq(recordingGenres.recordingId, recording.id));
+
+        const genreIds = genresList.map((g) => g.genreId);
+
+        return {
+          ...recording,
+          peopleNames,
+          genreIds,
+        };
+      })
+    );
+
+    return { success: true, data: recordingsWithRelations };
   } catch (error) {
     return {
       success: false,

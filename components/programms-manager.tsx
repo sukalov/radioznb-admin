@@ -168,12 +168,18 @@ export function ProgramsManager() {
       );
     }
 
-    // Host filters
-    if (filters.programsWithHost && !filters.programsWithoutHost) {
-      result = result.filter((program) => program.hostId);
-    } else if (filters.programsWithoutHost && !filters.programsWithHost) {
+    // Host filters (inverted logic: ON = exclude, OFF = include)
+    // If both are OFF, show nothing
+    if (!filters.programsWithHost && !filters.programsWithoutHost) {
+      result = [];
+    } else if (!filters.programsWithHost) {
+      // Exclude programs with host
       result = result.filter((program) => !program.hostId);
+    } else if (!filters.programsWithoutHost) {
+      // Exclude programs without host
+      result = result.filter((program) => program.hostId);
     }
+    // If both are ON, show all (no filtering)
 
     // Sorting
     result.sort((a, b) => {

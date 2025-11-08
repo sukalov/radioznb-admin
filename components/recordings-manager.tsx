@@ -16,6 +16,8 @@ import { useFilters } from "@/contexts/filter-context";
 
 type RecordingWithProgram = Recording & {
   program?: string | null;
+  peopleNames?: string;
+  genreIds?: string[];
 };
 
 export function RecordingsManager() {
@@ -105,7 +107,11 @@ export function RecordingsManager() {
             .replace("ё", "е")
             .includes(query) ||
           recording.program?.toLowerCase().replace("ё", "е").includes(query) ||
-          recording.keywords?.toLowerCase().replace("ё", "е").includes(query)
+          recording.keywords?.toLowerCase().replace("ё", "е").includes(query) ||
+          recording.peopleNames
+            ?.toLowerCase()
+            .replace("ё", "е")
+            .includes(query)
       );
     }
 
@@ -130,9 +136,14 @@ export function RecordingsManager() {
       );
     }
 
-    // Genre filter - Note: This requires additional data from the junction table
-    // For now, we'll skip this as it requires a more complex query
-    // You may want to enhance getRecordings to include genre information
+    // Genre filter
+    if (filters.selectedGenres.length > 0) {
+      result = result.filter((recording) =>
+        recording.genreIds?.some((genreId) =>
+          filters.selectedGenres.includes(genreId)
+        )
+      );
+    }
 
     // Sorting
     result.sort((a, b) => {

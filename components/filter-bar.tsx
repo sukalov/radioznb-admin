@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useFilters } from "@/contexts/filter-context";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   Select,
   SelectContent,
@@ -12,8 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { X } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { X, User, UserX, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getGenres, getPrograms } from "@/lib/actions";
 import type { Genre, Program } from "@/db/schema";
@@ -40,40 +45,38 @@ export function FilterBar() {
     }
   }, [activeTab]);
 
-  // Don't show filter bar on home page or login
   if (!activeTab) {
     return null;
   }
 
   return (
     <div className="border-b bg-background sticky top-0 z-10">
-      <div className="container mx-auto p-4 max-w-3xl">
-        <div className="flex flex-wrap items-center gap-4">
-          {/* Search input - common for all pages */}
-          <div className="flex-1 min-w-[200px]">
-            <Input
-              type="text"
-              placeholder="поиск..."
-              value={filters.searchQuery}
-              onChange={(e) =>
-                updateFilters({
-                  searchQuery: e.target.value.replace("ё", "е"),
-                })
-              }
-              className="w-full"
-            />
-          </div>
+      <div className="container mx-auto px-4 py-3">
+        <TooltipProvider>
+          <div className="flex flex-wrap gap-3 w-fit mx-auto">
+            {/* Search input - common for all pages */}
+            <div className="flex-1 min-w-[180px] max-w-[300px]">
+              <Input
+                type="text"
+                placeholder="поиск..."
+                value={filters.searchQuery}
+                onChange={(e) =>
+                  updateFilters({
+                    searchQuery: e.target.value.replace("ё", "е"),
+                  })
+                }
+                className="w-full"
+              />
+            </div>
 
-          {/* Sort select - common for all pages */}
-          <div className="flex items-center gap-2">
-            <Label className="text-sm whitespace-nowrap">сортировка:</Label>
+            {/* Sort select - common for all pages */}
             <Select
               value={filters.sortBy}
               onValueChange={(value) =>
                 updateFilters({ sortBy: value as typeof filters.sortBy })
               }
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[160px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -83,82 +86,121 @@ export function FilterBar() {
                 <SelectItem value="date-desc">дата (новые)</SelectItem>
               </SelectContent>
             </Select>
-          </div>
 
-          {/* Programs-specific filters */}
-          {activeTab === "programs" && (
-            <>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="with-host"
-                  checked={filters.programsWithHost}
-                  onCheckedChange={(checked) =>
-                    updateFilters({ programsWithHost: checked as boolean })
-                  }
-                />
-                <Label htmlFor="with-host" className="text-sm cursor-pointer">
-                  с ведущим
-                </Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="without-host"
-                  checked={filters.programsWithoutHost}
-                  onCheckedChange={(checked) =>
-                    updateFilters({ programsWithoutHost: checked as boolean })
-                  }
-                />
-                <Label
-                  htmlFor="without-host"
-                  className="text-sm cursor-pointer"
-                >
-                  без ведущего
-                </Label>
-              </div>
-            </>
-          )}
+            {/* Programs-specific filters */}
+            {activeTab === "programs" && (
+              <ToggleGroup
+                type="multiple"
+                variant="outline"
+                size="sm"
+                value={[
+                  ...(filters.programsWithHost ? ["with-host"] : []),
+                  ...(filters.programsWithoutHost ? ["without-host"] : []),
+                ]}
+                onValueChange={(values) => {
+                  updateFilters({
+                    programsWithHost: values.includes("with-host"),
+                    programsWithoutHost: values.includes("without-host"),
+                  });
+                }}
+              >
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <ToggleGroupItem
+                      value="with-host"
+                      aria-label="с ведущим"
+                      className={`${
+                        filters.programsWithHost ? "border-primary" : ""
+                      }`}
+                    >
+                      <User className="h-4 w-4" />
+                    </ToggleGroupItem>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>с ведущим</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <ToggleGroupItem
+                      value="without-host"
+                      aria-label="без ведущего"
+                      className={`${
+                        filters.programsWithoutHost ? "border-primary" : ""
+                      }`}
+                    >
+                      <UserX className="h-4 w-4" />
+                    </ToggleGroupItem>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>без ведущего</p>
+                  </TooltipContent>
+                </Tooltip>
+              </ToggleGroup>
+            )}
 
-          {/* People-specific filters */}
-          {activeTab === "people" && (
-            <>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="with-telegram"
-                  checked={filters.peopleWithTelegram}
-                  onCheckedChange={(checked) =>
-                    updateFilters({ peopleWithTelegram: checked as boolean })
-                  }
-                />
-                <Label
-                  htmlFor="with-telegram"
-                  className="text-sm cursor-pointer"
-                >
-                  с телеграмом
-                </Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="without-telegram"
-                  checked={filters.peopleWithoutTelegram}
-                  onCheckedChange={(checked) =>
-                    updateFilters({ peopleWithoutTelegram: checked as boolean })
-                  }
-                />
-                <Label
-                  htmlFor="without-telegram"
-                  className="text-sm cursor-pointer"
-                >
-                  без телеграма
-                </Label>
-              </div>
-            </>
-          )}
+            {/* People-specific filters */}
+            {activeTab === "people" && (
+              <ToggleGroup
+                type="multiple"
+                variant="outline"
+                size="sm"
+                value={[
+                  ...(filters.peopleWithTelegram ? ["with-telegram"] : []),
+                  ...(filters.peopleWithoutTelegram
+                    ? ["without-telegram"]
+                    : []),
+                ]}
+                onValueChange={(values) => {
+                  updateFilters({
+                    peopleWithTelegram: values.includes("with-telegram"),
+                    peopleWithoutTelegram: values.includes("without-telegram"),
+                  });
+                }}
+              >
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <ToggleGroupItem
+                      value="with-telegram"
+                      aria-label="с телеграмом"
+                      className={`${
+                        filters.peopleWithTelegram ? "border-primary" : ""
+                      }`}
+                    >
+                      <Send className="h-4 w-4" />
+                    </ToggleGroupItem>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>с телеграмом</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <ToggleGroupItem
+                      value="without-telegram"
+                      aria-label="без телеграма"
+                      className={`${
+                        filters.peopleWithoutTelegram ? "border-primary" : ""
+                      }`}
+                    >
+                      <div className="relative">
+                        <Send className="h-4 w-4" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-10 h-[1.8px] rounded-full bg-current rotate-45 translate-x-[1px] -translate-y-[1px]" />
+                        </div>
+                      </div>
+                    </ToggleGroupItem>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>без телеграма</p>
+                  </TooltipContent>
+                </Tooltip>
+              </ToggleGroup>
+            )}
 
-          {/* Recordings-specific filters */}
-          {activeTab === "recordings" && (
-            <>
-              <div className="flex items-center gap-2">
-                <Label className="text-sm whitespace-nowrap">тип:</Label>
+            {/* Recordings-specific filters */}
+            {activeTab === "recordings" && (
+              <>
                 <Select
                   value={filters.recordingType}
                   onValueChange={(value) =>
@@ -167,19 +209,16 @@ export function FilterBar() {
                     })
                   }
                 >
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-[130px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">все</SelectItem>
+                    <SelectItem value="all">все типы</SelectItem>
                     <SelectItem value="live">прямой эфир</SelectItem>
                     <SelectItem value="podcast">подкаст</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
 
-              <div className="flex items-center gap-2">
-                <Label className="text-sm whitespace-nowrap">статус:</Label>
                 <Select
                   value={filters.recordingStatus}
                   onValueChange={(value) =>
@@ -188,20 +227,17 @@ export function FilterBar() {
                     })
                   }
                 >
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-[130px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">все</SelectItem>
+                    <SelectItem value="all">все статусы</SelectItem>
                     <SelectItem value="published">опубликовано</SelectItem>
                     <SelectItem value="hidden">скрыто</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
 
-              {programs.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm whitespace-nowrap">передача:</Label>
+                {programs.length > 0 && (
                   <Select
                     value={filters.selectedPrograms[0] || "all"}
                     onValueChange={(value) =>
@@ -210,7 +246,7 @@ export function FilterBar() {
                       })
                     }
                   >
-                    <SelectTrigger className="w-[160px]">
+                    <SelectTrigger className="w-[140px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -222,12 +258,9 @@ export function FilterBar() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-              )}
+                )}
 
-              {genres.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm whitespace-nowrap">жанр:</Label>
+                {genres.length > 0 && (
                   <Select
                     value={filters.selectedGenres[0] || "all"}
                     onValueChange={(value) =>
@@ -236,7 +269,7 @@ export function FilterBar() {
                       })
                     }
                   >
-                    <SelectTrigger className="w-[160px]">
+                    <SelectTrigger className="w-[130px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -248,24 +281,24 @@ export function FilterBar() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
 
-          {/* Reset button - always on the right */}
-          <div className="ml-auto">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={resetFilters}
-              className="whitespace-nowrap"
-            >
-              <X className="h-4 w-4 mr-1" />
-              сбросить фильтры
-            </Button>
+            {/* Reset button - always on the right */}
+            <div className="ml-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetFilters}
+                className="whitespace-nowrap flex items-center justify-center align-middle"
+              >
+                <X />
+                сбросить фильтры
+              </Button>
+            </div>
           </div>
-        </div>
+        </TooltipProvider>
       </div>
     </div>
   );
