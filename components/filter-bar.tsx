@@ -19,7 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { X, User, UserX, Send } from "lucide-react";
+import { X, User, UserX, Send, Search } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { getGenres, getPrograms } from "@/lib/actions";
 import type { Genre, Program } from "@/db/schema";
@@ -61,7 +61,8 @@ export function FilterBar() {
         <TooltipProvider>
           <div className="flex flex-wrap gap-3 w-fit mx-auto">
             {/* Search input - common for all pages */}
-            <div className="flex-1 min-w-[180px] max-w-[300px]">
+            <div className="flex-1 min-w-[180px] max-w-[300px] relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="поиск..."
@@ -71,7 +72,7 @@ export function FilterBar() {
                     searchQuery: e.target.value,
                   })
                 }
-                className="w-full"
+                className="w-full pl-9"
               />
             </div>
 
