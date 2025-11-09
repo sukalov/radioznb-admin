@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Tooltip,
   TooltipContent,
@@ -19,7 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { X, User, UserX, Send } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { getGenres, getPrograms } from "@/lib/actions";
 import type { Genre, Program } from "@/db/schema";
 
@@ -44,6 +45,11 @@ export function FilterBar() {
       );
     }
   }, [activeTab]);
+
+  // Sort programs alphabetically by name
+  const sortedPrograms = useMemo(() => {
+    return [...programs].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+  }, [programs]);
 
   if (!activeTab) {
     return null;
@@ -250,12 +256,14 @@ export function FilterBar() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">все передачи</SelectItem>
-                      {programs.map((program) => (
-                        <SelectItem key={program.id} value={program.id}>
-                          {program.name}
-                        </SelectItem>
-                      ))}
+                      <ScrollArea className="h-[400px]">
+                        <SelectItem value="all">все передачи</SelectItem>
+                        {sortedPrograms.map((program) => (
+                          <SelectItem key={program.id} value={program.id}>
+                            {program.name}
+                          </SelectItem>
+                        ))}
+                      </ScrollArea>
                     </SelectContent>
                   </Select>
                 )}
