@@ -12,7 +12,7 @@ class InvalidLoginError extends CredentialsSignin {
 }
 
 export const {
-  handlers: { GET, POST },
+  handlers,
   auth,
   signIn,
   signOut,
@@ -41,3 +41,5 @@ export const {
     }),
   ],
 });
+
+export const { GET, POST } = handlers;

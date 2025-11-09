@@ -3,6 +3,7 @@ import "./globals.css";
 import { GeistSans } from "geist/font/sans";
 import { Toaster } from "sonner";
 import { SessionProvider } from "next-auth/react";
+import { cn } from "@/lib/utils";
 
 const title = "записи радио знб";
 const description = "админский сайт управления библиотекой радио зимы не будет";
@@ -19,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru">
-      <body className={GeistSans.variable}>
+    <html lang="ru" className="light">
+      <body className={cn(GeistSans.variable)}>
         <SessionProvider>
           {children}
           <Toaster />

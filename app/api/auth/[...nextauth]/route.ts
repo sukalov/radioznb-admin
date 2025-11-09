@@ -1,16 +1,16 @@
-import { GET as AuthGET, POST as AuthPOST } from "app/auth";
+import { handlers } from "app/auth";
 import type { NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,
   _context: { params: Promise<{ nextauth: string[] }> }
 ) {
-  return AuthGET(request);
+  return handlers.GET(request);
 }
 
 export async function POST(
   request: NextRequest,
   _context: { params: Promise<{ nextauth: string[] }> }
 ) {
-  return AuthPOST(request);
+  return handlers.POST(request);
 }
