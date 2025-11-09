@@ -86,9 +86,9 @@ export function GenresManager() {
 
     // Search filter
     if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase();
+      const query = filters.searchQuery.toLowerCase().replace(/[^а-я]/g, "").replace("ё", "е");
       result = result.filter((genre) =>
-        genre.name.toLowerCase().replace("ё", "е").includes(query),
+        genre.name.toLowerCase().replace("ё", "е").replace(/[^а-я]/g, "").includes(query),
       );
     }
 

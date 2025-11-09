@@ -175,15 +175,26 @@ export function ProgramsManager() {
 
     // Search filter
     if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase();
+      const query = filters.searchQuery
+        .toLowerCase()
+        .replace(/[^а-я]/g, "")
+        .replace("ё", "е");
       result = result.filter(
         (program) =>
-          program.name.toLowerCase().includes(query) ||
+          program.name
+            .toLowerCase()
+            .replace(/[^а-я]/g, "")
+            .includes(query) ||
           program.description
             ?.toLowerCase()
             .replace("ё", "е")
+            .replace(/[^а-я]/g, "")
             .includes(query) ||
-          program.host?.name.toLowerCase().replace("ё", "е").includes(query)
+          program.host?.name
+            .toLowerCase()
+            .replace("ё", "е")
+            .replace(/[^а-я]/g, "")
+            .includes(query)
       );
     }
 

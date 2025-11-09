@@ -64,7 +64,10 @@ export function RecordingsManager() {
     setTimeout(() => {
       if (formRef.current) {
         const yOffset = -120; // Offset for filter bar + some padding
-        const y = formRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        const y =
+          formRef.current.getBoundingClientRect().top +
+          window.pageYOffset +
+          yOffset;
         window.scrollTo({ top: y, behavior: "smooth" });
       }
     }, 100);
@@ -104,22 +107,36 @@ export function RecordingsManager() {
 
     // Search filter
     if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase();
+      const query = filters.searchQuery
+        .toLowerCase()
+        .replace("ё", "е")
+        .replace(/[^а-я]/g, "");
       result = result.filter(
         (recording) =>
           recording.episodeTitle
             .toLowerCase()
             .replace("ё", "е")
+            .replace(/[^а-я]/g, "")
             .includes(query) ||
           recording.description
             ?.toLowerCase()
             .replace("ё", "е")
+            .replace(/[^а-я]/g, "")
             .includes(query) ||
-          recording.program?.toLowerCase().replace("ё", "е").includes(query) ||
-          recording.keywords?.toLowerCase().replace("ё", "е").includes(query) ||
+          recording.program
+            ?.toLowerCase()
+            .replace("ё", "е")
+            .replace(/[^а-я]/g, "")
+            .includes(query) ||
+          recording.keywords
+            ?.toLowerCase()
+            .replace("ё", "е")
+            .replace(/[^а-я]/g, "")
+            .includes(query) ||
           recording.peopleNames
             ?.toLowerCase()
             .replace("ё", "е")
+            .replace(/[^а-я]/g, "")
             .includes(query)
       );
     }

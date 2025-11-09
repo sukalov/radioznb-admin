@@ -48,7 +48,7 @@ export function FilterBar() {
 
   // Sort programs alphabetically by name
   const sortedPrograms = useMemo(() => {
-    return [...programs].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+    return [...programs].sort((a, b) => a.name.localeCompare(b.name, "ru"));
   }, [programs]);
 
   if (!activeTab) {
@@ -68,7 +68,7 @@ export function FilterBar() {
                 value={filters.searchQuery}
                 onChange={(e) =>
                   updateFilters({
-                    searchQuery: e.target.value.replace("ё", "е"),
+                    searchQuery: e.target.value,
                   })
                 }
                 className="w-full"

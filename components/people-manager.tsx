@@ -106,7 +106,10 @@ export function PeopleManager() {
     setTimeout(() => {
       if (formRef.current) {
         const yOffset = -120; // Offset for filter bar + some padding
-        const y = formRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        const y =
+          formRef.current.getBoundingClientRect().top +
+          window.pageYOffset +
+          yOffset;
         window.scrollTo({ top: y, behavior: "smooth" });
       }
     }, 100);
@@ -147,13 +150,21 @@ export function PeopleManager() {
 
     // Search filter
     if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase();
+      const query = filters.searchQuery
+        .toLowerCase()
+        .replace(/[^а-я]/g, "")
+        .replace("ё", "е");
       result = result.filter(
         (person) =>
-          person.name.toLowerCase().includes(query) ||
+          person.name
+            .toLowerCase()
+            .replace("ё", "е")
+            .replace(/[^а-я]/g, "")
+            .includes(query) ||
           person.telegramAccount
             ?.toLowerCase()
             .replace("ё", "е")
+            .replace(/[^а-я]/g, "")
             .includes(query)
       );
     }
