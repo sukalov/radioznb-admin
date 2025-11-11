@@ -131,10 +131,9 @@ export function ProgramsManager() {
 		})
 		setIsCreating(true)
 
-		// Scroll to form with offset for filter bar
 		setTimeout(() => {
 			if (formRef.current) {
-				const yOffset = -120 // Offset for filter bar + some padding
+				const yOffset = -320
 				const y =
 					formRef.current.getBoundingClientRect().top +
 					window.pageYOffset +

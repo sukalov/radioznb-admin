@@ -102,7 +102,7 @@ export function PeopleManager() {
 
 		setTimeout(() => {
 			if (formRef.current) {
-				const yOffset = -120
+				const yOffset = -320
 				const y =
 					formRef.current.getBoundingClientRect().top +
 					window.pageYOffset +
