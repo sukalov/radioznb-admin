@@ -1,18 +1,16 @@
 'use client'
 
-import { useEffect, useRef, useState, useTransition } from 'react'
-import { toast } from 'sonner'
+import { Genre, Person, Program } from '@/db/schema'
+import { getGenres, getPeople, getPrograms } from '@/lib/actions'
 import {
 	createRecordingWithRelations,
-	updateRecordingWithRelations,
 	getRecordingForForm,
+	updateRecordingWithRelations,
 	type RecordingFormData,
 } from '@/lib/form-actions'
-import { getPrograms } from '@/lib/actions'
-import { getGenres } from '@/lib/actions'
-import { getPeople } from '@/lib/actions'
 import { generateSlug } from '@/lib/utils'
-import { Genre, Person, Program } from '@/db/schema'
+import { useEffect, useRef, useState, useTransition } from 'react'
+import { toast } from 'sonner'
 import { Button } from './ui/button'
 
 export default function RecordingsForm({
@@ -285,12 +283,30 @@ export default function RecordingsForm({
 		}))
 	}
 
+	const formRef = useRef<HTMLFormElement>(null)
+
+	useEffect(() => {
+		if (isLoadingData) return
+		const timeout = setTimeout(() => {
+			if (formRef.current) {
+				const yOffset = -320
+				const y =
+					formRef.current.getBoundingClientRect().top +
+					window.pageYOffset +
+					yOffset
+				window.scrollTo({ top: y, behavior: 'smooth' })
+			}
+		}, 100)
+
+		return () => clearTimeout(timeout)
+	}, [editingId, isLoadingData])
+
 	if (isLoadingData) {
-		return <div className='p-6'>загрузка данных...</div>
+		return <div className='flex grow'>загрузка данных...</div>
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className='space-y-4'>
+		<form ref={formRef} onSubmit={handleSubmit} className='space-y-4 min-h-1/2'>
 			<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 				<div>
 					<label className='block text-sm font-medium text-gray-700 mb-1'>
@@ -329,7 +345,7 @@ export default function RecordingsForm({
 				</div>
 
 				<div>
-					<label className='block text-sm font-medium text-secondary mb-1'>
+					<label className='block text-sm font-medium text-gray-700 mb-1'>
 						тип *
 					</label>
 					<select
