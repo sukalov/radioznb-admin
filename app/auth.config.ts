@@ -1,60 +1,60 @@
 //auth-config.ts
-import { DefaultSession, NextAuthConfig } from "next-auth";
+import { DefaultSession, NextAuthConfig } from 'next-auth'
 // Import to enable module augmentation
-import "@auth/core/jwt";
+import '@auth/core/jwt'
 
 export const authConfig = {
   pages: {
-    signIn: "/login",
+    signIn: '/login',
   },
   providers: [
     // added later in auth.ts since it requires bcrypt which is only compatible with Node.js
     // while this file is also used in non-Node.js environments
   ],
-  session: { strategy: "jwt" },
+  session: { strategy: 'jwt' },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isLoginPage = nextUrl.pathname.startsWith("/login");
+      const isLoggedIn = !!auth?.user
+      const isLoginPage = nextUrl.pathname.startsWith('/login')
 
       if (!isLoggedIn && !isLoginPage) {
-        return false;
+        return false
       }
-      return true;
+      return true
     },
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = user.role;
+        token.id = user.id
+        token.role = user.role
       }
-      return token;
+      return token
     },
     async session({ session, token }) {
-      session.user.id = token.id as string;
-      session.user.role = token.role as string;
-      return session;
+      session.user.id = token.id as string
+      session.user.role = token.role as string
+      return session
     },
   },
-} satisfies NextAuthConfig;
+} satisfies NextAuthConfig
 
-declare module "next-auth" {
+declare module 'next-auth' {
   interface Session {
-    accessToken?: string;
+    accessToken?: string
     user: {
-      id: string;
-      role: string;
-    } & DefaultSession["user"];
+      id: string
+      role: string
+    } & DefaultSession['user']
   }
 
   interface User {
-    id?: string;
-    role: string;
+    id?: string
+    role: string
   }
 }
 
-declare module "@auth/core/jwt" {
+declare module '@auth/core/jwt' {
   interface JWT {
-    id: string;
-    role: string;
+    id: string
+    role: string
   }
 }

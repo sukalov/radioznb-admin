@@ -1,14 +1,14 @@
-"use server";
+'use server'
 
-import { db } from "@/db";
-import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
+import { db } from '@/db'
+import { revalidatePath } from 'next/cache'
+import { eq } from 'drizzle-orm'
 import {
   recordings,
   recordingGenres,
   recordingPeople,
   type Recording,
-} from "@/db/schema";
+} from '@/db/schema'
 
 // ============================================================================
 // types
@@ -16,22 +16,22 @@ import {
 
 type ActionResult<T = void> =
   | { success: true; data: T }
-  | { success: false; error: string };
+  | { success: false; error: string }
 
 export type RecordingFormData = {
-  programId: string;
-  episodeTitle: string;
-  description?: string;
-  type: "live" | "podcast";
-  releaseDate: Date;
-  duration: number;
-  status: "published" | "hidden";
-  keywords?: string;
-  genreIds: string[];
-  hosts: string[];
-  guests: string[];
-  fileUrl: string;
-};
+  programId: string
+  episodeTitle: string
+  description?: string
+  type: 'live' | 'podcast'
+  releaseDate: Date
+  duration: number
+  status: 'published' | 'hidden'
+  keywords?: string
+  genreIds: string[]
+  hosts: string[]
+  guests: string[]
+  fileUrl: string
+}
 
 // ============================================================================
 // complex form actions
@@ -45,13 +45,13 @@ export async function createRecordingWithRelations(
 ): Promise<ActionResult<{ id: string }>> {
   try {
     // validate no person is both host and guest
-    const allPeople = [...formData.hosts, ...formData.guests];
-    const uniquePeople = new Set(allPeople);
+    const allPeople = [...formData.hosts, ...formData.guests]
+    const uniquePeople = new Set(allPeople)
     if (allPeople.length !== uniquePeople.size) {
       return {
         success: false,
-        error: "человек не может быть одновременно ведущим и гостем",
-      };
+        error: 'человек не может быть одновременно ведущим и гостем',
+      }
     }
 
     // create recording
@@ -68,7 +68,7 @@ export async function createRecordingWithRelations(
         keywords: formData.keywords || null,
         fileUrl: formData.fileUrl,
       })
-      .returning();
+      .returning()
 
     // add genres
     if (formData.genreIds.length > 0) {
@@ -77,7 +77,7 @@ export async function createRecordingWithRelations(
           recordingId: recording.id,
           genreId,
         })),
-      );
+      )
     }
 
     // add hosts
@@ -86,9 +86,9 @@ export async function createRecordingWithRelations(
         formData.hosts.map((personId) => ({
           recordingId: recording.id,
           personId,
-          role: "host" as const,
+          role: 'host' as const,
         })),
-      );
+      )
     }
 
     // add guests
@@ -97,19 +97,19 @@ export async function createRecordingWithRelations(
         formData.guests.map((personId) => ({
           recordingId: recording.id,
           personId,
-          role: "guest" as const,
+          role: 'guest' as const,
         })),
-      );
+      )
     }
 
-    revalidatePath("/admin/recordings");
-    return { success: true, data: { id: recording.id } };
+    revalidatePath('/admin/recordings')
+    return { success: true, data: { id: recording.id } }
   } catch (error) {
     return {
       success: false,
       error:
-        error instanceof Error ? error.message : "не удалось создать запись",
-    };
+        error instanceof Error ? error.message : 'не удалось создать запись',
+    }
   }
 }
 
@@ -122,13 +122,13 @@ export async function updateRecordingWithRelations(
 ): Promise<ActionResult> {
   try {
     // validate no person is both host and guest
-    const allPeople = [...formData.hosts, ...formData.guests];
-    const uniquePeople = new Set(allPeople);
+    const allPeople = [...formData.hosts, ...formData.guests]
+    const uniquePeople = new Set(allPeople)
     if (allPeople.length !== uniquePeople.size) {
       return {
         success: false,
-        error: "человек не может быть одновременно ведущим и гостем",
-      };
+        error: 'человек не может быть одновременно ведущим и гостем',
+      }
     }
 
     // update recording
@@ -145,11 +145,11 @@ export async function updateRecordingWithRelations(
         keywords: formData.keywords || null,
         fileUrl: formData.fileUrl,
       })
-      .where(eq(recordings.id, id));
+      .where(eq(recordings.id, id))
 
     // delete all existing genres and people
-    await db.delete(recordingGenres).where(eq(recordingGenres.recordingId, id));
-    await db.delete(recordingPeople).where(eq(recordingPeople.recordingId, id));
+    await db.delete(recordingGenres).where(eq(recordingGenres.recordingId, id))
+    await db.delete(recordingPeople).where(eq(recordingPeople.recordingId, id))
 
     // add genres
     if (formData.genreIds.length > 0) {
@@ -158,7 +158,7 @@ export async function updateRecordingWithRelations(
           recordingId: id,
           genreId,
         })),
-      );
+      )
     }
 
     // add hosts
@@ -167,9 +167,9 @@ export async function updateRecordingWithRelations(
         formData.hosts.map((personId) => ({
           recordingId: id,
           personId,
-          role: "host" as const,
+          role: 'host' as const,
         })),
-      );
+      )
     }
 
     // add guests
@@ -178,19 +178,19 @@ export async function updateRecordingWithRelations(
         formData.guests.map((personId) => ({
           recordingId: id,
           personId,
-          role: "guest" as const,
+          role: 'guest' as const,
         })),
-      );
+      )
     }
 
-    revalidatePath("/recordings");
-    return { success: true, data: undefined };
+    revalidatePath('/recordings')
+    return { success: true, data: undefined }
   } catch (error) {
     return {
       success: false,
       error:
-        error instanceof Error ? error.message : "не удалось обновить запись",
-    };
+        error instanceof Error ? error.message : 'не удалось обновить запись',
+    }
   }
 }
 
@@ -199,30 +199,30 @@ export async function updateRecordingWithRelations(
  */
 export async function getRecordingForForm(id: string): Promise<
   ActionResult<{
-    recording: Recording;
-    genreIds: string[];
-    hosts: string[];
-    guests: string[];
+    recording: Recording
+    genreIds: string[]
+    hosts: string[]
+    guests: string[]
   }>
 > {
   try {
     const [recording] = await db
       .select()
       .from(recordings)
-      .where(eq(recordings.id, id));
+      .where(eq(recordings.id, id))
 
     if (!recording) {
       return {
         success: false,
-        error: "запись не найдена",
-      };
+        error: 'запись не найдена',
+      }
     }
 
     // get genres
     const genres = await db
       .select({ genreId: recordingGenres.genreId })
       .from(recordingGenres)
-      .where(eq(recordingGenres.recordingId, id));
+      .where(eq(recordingGenres.recordingId, id))
 
     // get people
     const people = await db
@@ -231,14 +231,12 @@ export async function getRecordingForForm(id: string): Promise<
         role: recordingPeople.role,
       })
       .from(recordingPeople)
-      .where(eq(recordingPeople.recordingId, id));
+      .where(eq(recordingPeople.recordingId, id))
 
-    const hosts = people
-      .filter((p) => p.role === "host")
-      .map((p) => p.personId);
+    const hosts = people.filter((p) => p.role === 'host').map((p) => p.personId)
     const guests = people
-      .filter((p) => p.role === "guest")
-      .map((p) => p.personId);
+      .filter((p) => p.role === 'guest')
+      .map((p) => p.personId)
 
     return {
       success: true,
@@ -248,13 +246,13 @@ export async function getRecordingForForm(id: string): Promise<
         hosts,
         guests,
       },
-    };
+    }
   } catch (error) {
     return {
       success: false,
       error:
-        error instanceof Error ? error.message : "не удалось загрузить запись",
-    };
+        error instanceof Error ? error.message : 'не удалось загрузить запись',
+    }
   }
 }
 
@@ -265,15 +263,15 @@ export async function deleteRecordingWithRelations(
   id: string,
 ): Promise<ActionResult> {
   try {
-    await db.delete(recordings).where(eq(recordings.id, id));
+    await db.delete(recordings).where(eq(recordings.id, id))
 
-    revalidatePath("/recordings");
-    return { success: true, data: undefined };
+    revalidatePath('/recordings')
+    return { success: true, data: undefined }
   } catch (error) {
     return {
       success: false,
       error:
-        error instanceof Error ? error.message : "не удалось удалить запись",
-    };
+        error instanceof Error ? error.message : 'не удалось удалить запись',
+    }
   }
 }

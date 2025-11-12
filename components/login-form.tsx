@@ -1,16 +1,11 @@
-"use client";
+'use client'
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { signIn } from "next-auth/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { signIn } from 'next-auth/react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -18,35 +13,35 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { toast } from 'sonner'
 
 const FormSchema = z.object({
   username: z.string(),
   password: z.string().min(6),
-});
+})
 
 export default function LoginForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
     },
-  });
+  })
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const res = await signIn("credentials", {
+    const res = await signIn('credentials', {
       redirect: false,
       username: data.username,
       password: data.password,
-    });
+    })
     if (res?.error) {
-      toast.error("уф что то пошло не так: " + res.error);
-      form.setError("password", { type: "manual", message: (res as any).code });
+      toast.error('уф что то пошло не так: ' + res.error)
+      form.setError('password', { type: 'manual', message: (res as any).code })
     } else {
-      window.location.href = "/";
+      window.location.href = '/'
     }
   }
 
@@ -96,5 +91,5 @@ export default function LoginForm() {
         </Form>
       </CardContent>
     </Card>
-  );
+  )
 }

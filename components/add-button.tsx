@@ -1,6 +1,6 @@
-import { Plus } from "lucide-react";
-import { ButtonHTMLAttributes, FC } from "react";
-import { Button } from "@/components/ui/button";
+import { Plus } from 'lucide-react'
+import { ButtonHTMLAttributes, FC } from 'react'
+import { Button } from '@/components/ui/button'
 
 const AddButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => (
   <Button {...props} className="">
@@ -9,6 +9,6 @@ const AddButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => (
       <div className="hidden md:block">добавить</div>
     </div>
   </Button>
-);
+)
 
-export default AddButton;
+export default AddButton

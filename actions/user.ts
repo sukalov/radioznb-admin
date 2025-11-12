@@ -1,25 +1,25 @@
-"use server";
+'use server'
 
-import { db } from "@/db";
-import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { db } from '@/db'
+import { users } from '@/db/schema'
+import { eq } from 'drizzle-orm'
 // import { revalidatePath } from 'next/cache';
-import { genSaltSync, hashSync } from "bcrypt-ts";
+import { genSaltSync, hashSync } from 'bcrypt-ts'
 
 export async function getUser(username: string) {
-  return await db.select().from(users).where(eq(users.username, username));
+  return await db.select().from(users).where(eq(users.username, username))
 }
 
 export async function createUser(
   username: string,
   password: string,
-  role?: "admin" | "user",
+  role?: 'admin' | 'user',
 ) {
-  const salt = genSaltSync(10);
-  const hash = hashSync(password, salt);
-  const userRole = role || "user";
+  const salt = genSaltSync(10)
+  const hash = hashSync(password, salt)
+  const userRole = role || 'user'
 
   return await db
     .insert(users)
-    .values({ username: username, password: hash, role: userRole });
+    .values({ username: username, password: hash, role: userRole })
 }

@@ -1,5 +1,5 @@
-import { RecordingsManager } from "@/components/recordings-manager";
+import { RecordingsManager } from '@/components/recordings-manager'
 
 export default function Page() {
-  return <RecordingsManager />;
+  return <RecordingsManager />
 }

@@ -1,58 +1,58 @@
-"use client";
+'use client'
 
-import { usePathname } from "next/navigation";
-import { useFilters } from "@/contexts/filter-context";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { usePathname } from 'next/navigation'
+import { useFilters } from '@/contexts/filter-context'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from '@/components/ui/select'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { X, User, UserX, Send, Search } from "lucide-react";
-import { useEffect, useState, useMemo } from "react";
-import { getGenres, getPrograms } from "@/lib/actions";
-import type { Genre, Program } from "@/db/schema";
+} from '@/components/ui/tooltip'
+import { X, User, UserX, Send, Search } from 'lucide-react'
+import { useEffect, useState, useMemo } from 'react'
+import { getGenres, getPrograms } from '@/lib/actions'
+import type { Genre, Program } from '@/db/schema'
 
-type Tab = "programs" | "people" | "recordings" | "genres";
+type Tab = 'programs' | 'people' | 'recordings' | 'genres'
 
 export function FilterBar() {
-  const pathname = usePathname();
-  const activeTab = pathname.split("/")[1] as Tab;
-  const { filters, updateFilters, resetFilters } = useFilters();
+  const pathname = usePathname()
+  const activeTab = pathname.split('/')[1] as Tab
+  const { filters, updateFilters, resetFilters } = useFilters()
 
-  const [genres, setGenres] = useState<Genre[]>([]);
-  const [programs, setPrograms] = useState<Program[]>([]);
+  const [genres, setGenres] = useState<Genre[]>([])
+  const [programs, setPrograms] = useState<Program[]>([])
 
   // Load genres and programs for recordings page
   useEffect(() => {
-    if (activeTab === "recordings") {
+    if (activeTab === 'recordings') {
       Promise.all([getGenres(), getPrograms()]).then(
         ([genresRes, programsRes]) => {
-          if (genresRes.success) setGenres(genresRes.data!);
-          if (programsRes.success) setPrograms(programsRes.data!);
-        }
-      );
+          if (genresRes.success) setGenres(genresRes.data!)
+          if (programsRes.success) setPrograms(programsRes.data!)
+        },
+      )
     }
-  }, [activeTab]);
+  }, [activeTab])
 
   // Sort programs alphabetically by name
   const sortedPrograms = useMemo(() => {
-    return [...programs].sort((a, b) => a.name.localeCompare(b.name, "ru"));
-  }, [programs]);
+    return [...programs].sort((a, b) => a.name.localeCompare(b.name, 'ru'))
+  }, [programs])
 
   if (!activeTab) {
-    return null;
+    return null
   }
 
   return (
@@ -95,20 +95,20 @@ export function FilterBar() {
             </Select>
 
             {/* Programs-specific filters */}
-            {activeTab === "programs" && (
+            {activeTab === 'programs' && (
               <ToggleGroup
                 type="multiple"
                 variant="outline"
                 size="sm"
                 value={[
-                  ...(filters.programsWithHost ? ["with-host"] : []),
-                  ...(filters.programsWithoutHost ? ["without-host"] : []),
+                  ...(filters.programsWithHost ? ['with-host'] : []),
+                  ...(filters.programsWithoutHost ? ['without-host'] : []),
                 ]}
                 onValueChange={(values) => {
                   updateFilters({
-                    programsWithHost: values.includes("with-host"),
-                    programsWithoutHost: values.includes("without-host"),
-                  });
+                    programsWithHost: values.includes('with-host'),
+                    programsWithoutHost: values.includes('without-host'),
+                  })
                 }}
               >
                 <Tooltip>
@@ -117,7 +117,7 @@ export function FilterBar() {
                       value="with-host"
                       aria-label="с ведущим"
                       className={`${
-                        filters.programsWithHost ? "border-primary" : ""
+                        filters.programsWithHost ? 'border-primary' : ''
                       }`}
                     >
                       <User className="h-4 w-4" />
@@ -133,7 +133,7 @@ export function FilterBar() {
                       value="without-host"
                       aria-label="без ведущего"
                       className={`${
-                        filters.programsWithoutHost ? "border-primary" : ""
+                        filters.programsWithoutHost ? 'border-primary' : ''
                       }`}
                     >
                       <UserX className="h-4 w-4" />
@@ -147,22 +147,22 @@ export function FilterBar() {
             )}
 
             {/* People-specific filters */}
-            {activeTab === "people" && (
+            {activeTab === 'people' && (
               <ToggleGroup
                 type="multiple"
                 variant="outline"
                 size="sm"
                 value={[
-                  ...(filters.peopleWithTelegram ? ["with-telegram"] : []),
+                  ...(filters.peopleWithTelegram ? ['with-telegram'] : []),
                   ...(filters.peopleWithoutTelegram
-                    ? ["without-telegram"]
+                    ? ['without-telegram']
                     : []),
                 ]}
                 onValueChange={(values) => {
                   updateFilters({
-                    peopleWithTelegram: values.includes("with-telegram"),
-                    peopleWithoutTelegram: values.includes("without-telegram"),
-                  });
+                    peopleWithTelegram: values.includes('with-telegram'),
+                    peopleWithoutTelegram: values.includes('without-telegram'),
+                  })
                 }}
               >
                 <Tooltip>
@@ -171,7 +171,7 @@ export function FilterBar() {
                       value="with-telegram"
                       aria-label="с телеграмом"
                       className={`${
-                        filters.peopleWithTelegram ? "border-primary" : ""
+                        filters.peopleWithTelegram ? 'border-primary' : ''
                       }`}
                     >
                       <Send className="h-4 w-4" />
@@ -187,7 +187,7 @@ export function FilterBar() {
                       value="without-telegram"
                       aria-label="без телеграма"
                       className={`${
-                        filters.peopleWithoutTelegram ? "border-primary" : ""
+                        filters.peopleWithoutTelegram ? 'border-primary' : ''
                       }`}
                     >
                       <div className="relative">
@@ -206,7 +206,7 @@ export function FilterBar() {
             )}
 
             {/* Recordings-specific filters */}
-            {activeTab === "recordings" && (
+            {activeTab === 'recordings' && (
               <>
                 <Select
                   value={filters.recordingType}
@@ -246,10 +246,10 @@ export function FilterBar() {
 
                 {programs.length > 0 && (
                   <Select
-                    value={filters.selectedPrograms[0] || "all"}
+                    value={filters.selectedPrograms[0] || 'all'}
                     onValueChange={(value) =>
                       updateFilters({
-                        selectedPrograms: value === "all" ? [] : [value],
+                        selectedPrograms: value === 'all' ? [] : [value],
                       })
                     }
                   >
@@ -271,10 +271,10 @@ export function FilterBar() {
 
                 {genres.length > 0 && (
                   <Select
-                    value={filters.selectedGenres[0] || "all"}
+                    value={filters.selectedGenres[0] || 'all'}
                     onValueChange={(value) =>
                       updateFilters({
-                        selectedGenres: value === "all" ? [] : [value],
+                        selectedGenres: value === 'all' ? [] : [value],
                       })
                     }
                   >
@@ -310,5 +310,5 @@ export function FilterBar() {
         </TooltipProvider>
       </div>
     </div>
-  );
+  )
 }

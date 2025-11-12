@@ -1,102 +1,102 @@
-"use client";
+'use client'
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from 'react'
 
-export type SortOption = "name-asc" | "name-desc" | "date-asc" | "date-desc";
+export type SortOption = 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc'
 
 export interface FilterState {
   // Common filters
-  searchQuery: string;
-  sortBy: SortOption;
+  searchQuery: string
+  sortBy: SortOption
 
   // Programs filters
-  programsWithHost: boolean;
-  programsWithoutHost: boolean;
+  programsWithHost: boolean
+  programsWithoutHost: boolean
 
   // People filters
-  peopleWithTelegram: boolean;
-  peopleWithoutTelegram: boolean;
+  peopleWithTelegram: boolean
+  peopleWithoutTelegram: boolean
 
   // Recordings filters
-  recordingType: "all" | "live" | "podcast";
-  recordingStatus: "all" | "published" | "hidden";
-  selectedGenres: string[];
-  selectedPrograms: string[];
+  recordingType: 'all' | 'live' | 'podcast'
+  recordingStatus: 'all' | 'published' | 'hidden'
+  selectedGenres: string[]
+  selectedPrograms: string[]
 
   // Genres filters (minimal, just search)
 }
 
 interface FilterContextType {
-  filters: FilterState;
-  updateFilters: (updates: Partial<FilterState>) => void;
-  resetFilters: () => void;
+  filters: FilterState
+  updateFilters: (updates: Partial<FilterState>) => void
+  resetFilters: () => void
 }
 
 const defaultFilters: FilterState = {
-  searchQuery: "",
-  sortBy: "date-desc",
+  searchQuery: '',
+  sortBy: 'date-desc',
   programsWithHost: true,
   programsWithoutHost: true,
   peopleWithTelegram: true,
   peopleWithoutTelegram: true,
-  recordingType: "all",
-  recordingStatus: "all",
+  recordingType: 'all',
+  recordingStatus: 'all',
   selectedGenres: [],
   selectedPrograms: [],
-};
+}
 
-const FilterContext = createContext<FilterContextType | undefined>(undefined);
+const FilterContext = createContext<FilterContextType | undefined>(undefined)
 
-const STORAGE_KEY = "radioznb-filters";
+const STORAGE_KEY = 'radioznb-filters'
 
 export function FilterProvider({ children }: { children: React.ReactNode }) {
-  const [filters, setFilters] = useState<FilterState>(defaultFilters);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [filters, setFilters] = useState<FilterState>(defaultFilters)
+  const [isHydrated, setIsHydrated] = useState(false)
 
   // Load filters from localStorage on mount
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_KEY)
       if (stored) {
-        const parsed = JSON.parse(stored);
-        setFilters({ ...defaultFilters, ...parsed });
+        const parsed = JSON.parse(stored)
+        setFilters({ ...defaultFilters, ...parsed })
       }
     } catch (error) {
-      console.error("Failed to load filters from localStorage:", error);
+      console.error('Failed to load filters from localStorage:', error)
     }
-    setIsHydrated(true);
-  }, []);
+    setIsHydrated(true)
+  }, [])
 
   // Save filters to localStorage whenever they change
   useEffect(() => {
     if (isHydrated) {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(filters));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(filters))
       } catch (error) {
-        console.error("Failed to save filters to localStorage:", error);
+        console.error('Failed to save filters to localStorage:', error)
       }
     }
-  }, [filters, isHydrated]);
+  }, [filters, isHydrated])
 
   const updateFilters = (updates: Partial<FilterState>) => {
-    setFilters((prev) => ({ ...prev, ...updates }));
-  };
+    setFilters((prev) => ({ ...prev, ...updates }))
+  }
 
   const resetFilters = () => {
-    setFilters(defaultFilters);
-  };
+    setFilters(defaultFilters)
+  }
 
   return (
     <FilterContext.Provider value={{ filters, updateFilters, resetFilters }}>
       {children}
     </FilterContext.Provider>
-  );
+  )
 }
 
 export function useFilters() {
-  const context = useContext(FilterContext);
+  const context = useContext(FilterContext)
   if (!context) {
-    throw new Error("useFilters must be used within a FilterProvider");
+    throw new Error('useFilters must be used within a FilterProvider')
   }
-  return context;
+  return context
 }

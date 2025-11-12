@@ -14,296 +14,296 @@ import { useSession } from 'next-auth/react'
 import { useFilters } from '@/contexts/filter-context'
 
 type RecordingWithProgram = Recording & {
-	program?: string | null
-	peopleNames?: string
-	genreIds?: string[]
+  program?: string | null
+  peopleNames?: string
+  genreIds?: string[]
 }
 
 export function RecordingsManager() {
-	const [recordings, setRecordings] = useState<RecordingWithProgram[]>([])
-	const [isLoading, setIsLoading] = useState(true)
-	const [isPending, startTransition] = useTransition()
-	const [isCreating, setIsCreating] = useState(false)
-	const [editingId, setEditingId] = useState<string | null>(null)
-	const user = useSession({ required: true })
-	const { filters } = useFilters()
+  const [recordings, setRecordings] = useState<RecordingWithProgram[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isPending, startTransition] = useTransition()
+  const [isCreating, setIsCreating] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const user = useSession({ required: true })
+  const { filters } = useFilters()
 
-	const loadRecordings = async () => {
-		setIsLoading(true)
-		try {
-			const result = await getRecordings()
-			if (result.success) {
-				setRecordings(result.data!)
-			} else {
-				toast.error(result.error)
-			}
-		} catch (error) {
-			toast.error('не удалось загрузить записи: ' + error)
-		} finally {
-			setIsLoading(false)
-		}
-	}
+  const loadRecordings = async () => {
+    setIsLoading(true)
+    try {
+      const result = await getRecordings()
+      if (result.success) {
+        setRecordings(result.data!)
+      } else {
+        toast.error(result.error)
+      }
+    } catch (error) {
+      toast.error('не удалось загрузить записи: ' + error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-	useEffect(() => {
-		loadRecordings()
-	}, [])
+  useEffect(() => {
+    loadRecordings()
+  }, [])
 
-	useEffect(() => {
-		if (!isCreating && !editingId) {
-			loadRecordings()
-		}
-	}, [isCreating, editingId])
+  useEffect(() => {
+    if (!isCreating && !editingId) {
+      loadRecordings()
+    }
+  }, [isCreating, editingId])
 
-	const handleDelete = async (id: string) => {
-		if (confirm('вы уверены, что хотите удалить эту запись?')) {
-			startTransition(async () => {
-				try {
-					const result = await deleteRecordingWithRelations(id)
-					if (result.success) {
-						toast.success('файл удалён успешно')
-						await loadRecordings()
-					} else {
-						toast.error(result.error)
-					}
-				} catch (error) {
-					console.log(error)
-					toast.error('не удалось удалить файл')
-				}
-			})
-		}
-	}
+  const handleDelete = async (id: string) => {
+    if (confirm('вы уверены, что хотите удалить эту запись?')) {
+      startTransition(async () => {
+        try {
+          const result = await deleteRecordingWithRelations(id)
+          if (result.success) {
+            toast.success('файл удалён успешно')
+            await loadRecordings()
+          } else {
+            toast.error(result.error)
+          }
+        } catch (error) {
+          console.log(error)
+          toast.error('не удалось удалить файл')
+        }
+      })
+    }
+  }
 
-	function formatDuration(duration: number): string {
-		const hours = Math.floor(duration / 3600)
-		const minutes = Math.floor((duration % 3600) / 60)
-		const seconds = duration % 60
-		return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds
-			.toString()
-			.padStart(2, '0')}`
-	}
+  function formatDuration(duration: number): string {
+    const hours = Math.floor(duration / 3600)
+    const minutes = Math.floor((duration % 3600) / 60)
+    const seconds = duration % 60
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds
+      .toString()
+      .padStart(2, '0')}`
+  }
 
-	const filteredRecordings = useMemo(() => {
-		let result = [...recordings]
+  const filteredRecordings = useMemo(() => {
+    let result = [...recordings]
 
-		if (filters.searchQuery) {
-			const query = filters.searchQuery
-				.toLowerCase()
-				.replace('ё', 'е')
-				.replace(/[^а-я]/g, '')
-			result = result.filter(
-				(recording) =>
-					recording.episodeTitle
-						.toLowerCase()
-						.replace('ё', 'е')
-						.replace(/[^а-я]/g, '')
-						.includes(query) ||
-					recording.description
-						?.toLowerCase()
-						.replace('ё', 'е')
-						.replace(/[^а-я]/g, '')
-						.includes(query) ||
-					recording.program
-						?.toLowerCase()
-						.replace('ё', 'е')
-						.replace(/[^а-я]/g, '')
-						.includes(query) ||
-					recording.keywords
-						?.toLowerCase()
-						.replace('ё', 'е')
-						.replace(/[^а-я]/g, '')
-						.includes(query) ||
-					recording.peopleNames
-						?.toLowerCase()
-						.replace('ё', 'е')
-						.replace(/[^а-я]/g, '')
-						.includes(query)
-			)
-		}
+    if (filters.searchQuery) {
+      const query = filters.searchQuery
+        .toLowerCase()
+        .replace('ё', 'е')
+        .replace(/[^а-я]/g, '')
+      result = result.filter(
+        (recording) =>
+          recording.episodeTitle
+            .toLowerCase()
+            .replace('ё', 'е')
+            .replace(/[^а-я]/g, '')
+            .includes(query) ||
+          recording.description
+            ?.toLowerCase()
+            .replace('ё', 'е')
+            .replace(/[^а-я]/g, '')
+            .includes(query) ||
+          recording.program
+            ?.toLowerCase()
+            .replace('ё', 'е')
+            .replace(/[^а-я]/g, '')
+            .includes(query) ||
+          recording.keywords
+            ?.toLowerCase()
+            .replace('ё', 'е')
+            .replace(/[^а-я]/g, '')
+            .includes(query) ||
+          recording.peopleNames
+            ?.toLowerCase()
+            .replace('ё', 'е')
+            .replace(/[^а-я]/g, '')
+            .includes(query),
+      )
+    }
 
-		if (filters.recordingType !== 'all') {
-			result = result.filter(
-				(recording) => recording.type === filters.recordingType
-			)
-		}
+    if (filters.recordingType !== 'all') {
+      result = result.filter(
+        (recording) => recording.type === filters.recordingType,
+      )
+    }
 
-		if (filters.recordingStatus !== 'all') {
-			result = result.filter(
-				(recording) => recording.status === filters.recordingStatus
-			)
-		}
+    if (filters.recordingStatus !== 'all') {
+      result = result.filter(
+        (recording) => recording.status === filters.recordingStatus,
+      )
+    }
 
-		if (filters.selectedPrograms.length > 0) {
-			result = result.filter((recording) =>
-				filters.selectedPrograms.includes(recording.programId)
-			)
-		}
+    if (filters.selectedPrograms.length > 0) {
+      result = result.filter((recording) =>
+        filters.selectedPrograms.includes(recording.programId),
+      )
+    }
 
-		if (filters.selectedGenres.length > 0) {
-			result = result.filter((recording) =>
-				recording.genreIds?.some((genreId) =>
-					filters.selectedGenres.includes(genreId)
-				)
-			)
-		}
+    if (filters.selectedGenres.length > 0) {
+      result = result.filter((recording) =>
+        recording.genreIds?.some((genreId) =>
+          filters.selectedGenres.includes(genreId),
+        ),
+      )
+    }
 
-		result.sort((a, b) => {
-			switch (filters.sortBy) {
-				case 'name-asc':
-					return a.episodeTitle.localeCompare(b.episodeTitle, 'ru')
-				case 'name-desc':
-					return b.episodeTitle.localeCompare(a.episodeTitle, 'ru')
-				case 'date-asc':
-					return (
-						new Date(a.releaseDate).getTime() -
-						new Date(b.releaseDate).getTime()
-					)
-				case 'date-desc':
-					return (
-						new Date(b.releaseDate).getTime() -
-						new Date(a.releaseDate).getTime()
-					)
-				default:
-					return 0
-			}
-		})
+    result.sort((a, b) => {
+      switch (filters.sortBy) {
+        case 'name-asc':
+          return a.episodeTitle.localeCompare(b.episodeTitle, 'ru')
+        case 'name-desc':
+          return b.episodeTitle.localeCompare(a.episodeTitle, 'ru')
+        case 'date-asc':
+          return (
+            new Date(a.releaseDate).getTime() -
+            new Date(b.releaseDate).getTime()
+          )
+        case 'date-desc':
+          return (
+            new Date(b.releaseDate).getTime() -
+            new Date(a.releaseDate).getTime()
+          )
+        default:
+          return 0
+      }
+    })
 
-		return result
-	}, [recordings, filters])
+    return result
+  }, [recordings, filters])
 
-	if (isLoading) {
-		return <div>загрузка файлов...</div>
-	}
+  if (isLoading) {
+    return <div>загрузка файлов...</div>
+  }
 
-	return (
-		<div>
-			<div className='flex justify-between items-center mb-6'>
-				<h2 className='text-xl font-semibold pl-4'>файлы</h2>
-				{!isCreating && (
-					<AddButton
-						onClick={() => {
-							setEditingId('')
-							setIsCreating(true)
-						}}
-					/>
-				)}
-			</div>
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold pl-4">файлы</h2>
+        {!isCreating && (
+          <AddButton
+            onClick={() => {
+              setEditingId('')
+              setIsCreating(true)
+            }}
+          />
+        )}
+      </div>
 
-			{isCreating && (
-				<div className='mb-6 p-4 border rounded-lg bg-gray-50'>
-					<h3 className='text-lg font-medium mb-4'>новый файл</h3>
-					<RecordingsForm
-						editingId={editingId}
-						setIsCreating={setIsCreating}
-						setEditingId={setEditingId}
-					/>
-				</div>
-			)}
+      {isCreating && (
+        <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+          <h3 className="text-lg font-medium mb-4">новый файл</h3>
+          <RecordingsForm
+            editingId={editingId}
+            setIsCreating={setIsCreating}
+            setEditingId={setEditingId}
+          />
+        </div>
+      )}
 
-			<div className='space-y-4'>
-				{filteredRecordings.map((recording) => (
-					<Card key={recording.id} className='p-4'>
-						{editingId === recording.id ? (
-							<div>
-								<h3 className='text-lg font-medium mb-4'>
-									{`${recording.program} – ${recording.episodeTitle}`}
-								</h3>
-								<RecordingsForm
-									editingId={recording.id}
-									setEditingId={setEditingId}
-									setIsCreating={setIsCreating}
-								/>
-							</div>
-						) : (
-							<div className='flex justify-between items-stretch'>
-								<div className='flex-1'>
-									<div className='flex items-center space-x-2 mb-2 flex-col sm:flex-row'>
-										<h3 className='text-lg font-medium'>
-											{`${recording.program} – ${recording.episodeTitle}`}
-										</h3>
-										<div className='flex gap-2 py-1'>
-											<span
-												className={`px-2 py-1 text-xs rounded-full ${
-													recording.status === 'published'
-														? 'bg-green-100 text-green-800'
-														: 'bg-gray-100 text-gray-800'
-												}`}
-											>
-												{recording.status === 'published'
-													? 'опубликовано'
-													: 'скрыто'}
-											</span>
-											<span
-												className={`px-2 py-1 text-xs rounded-full ${
-													recording.type === 'live'
-														? 'bg-red-100 text-red-800'
-														: 'bg-blue-100 text-primary'
-												}`}
-											>
-												{recording.type === 'live' ? 'прямой эфир' : 'подкаст'}
-											</span>
-										</div>
-									</div>
-									{recording.description && (
-										<p className='text-gray-600 mb-2'>
-											{recording.description}
-										</p>
-									)}
-									<div className='text-sm text-gray-500 space-y-1'>
-										<p>
-											дата выхода:{' '}
-											{new Date(recording.releaseDate).toLocaleDateString(
-												'ru-RU'
-											)}
-										</p>
-										{recording.duration && (
-											<p>длительность: {formatDuration(recording.duration)}</p>
-										)}
-										{recording.keywords && (
-											<p>ключевые слова: {recording.keywords}</p>
-										)}
-									</div>
-								</div>
+      <div className="space-y-4">
+        {filteredRecordings.map((recording) => (
+          <Card key={recording.id} className="p-4">
+            {editingId === recording.id ? (
+              <div>
+                <h3 className="text-lg font-medium mb-4">
+                  {`${recording.program} – ${recording.episodeTitle}`}
+                </h3>
+                <RecordingsForm
+                  editingId={recording.id}
+                  setEditingId={setEditingId}
+                  setIsCreating={setIsCreating}
+                />
+              </div>
+            ) : (
+              <div className="flex justify-between items-stretch">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-2 flex-col sm:flex-row">
+                    <h3 className="text-lg font-medium">
+                      {`${recording.program} – ${recording.episodeTitle}`}
+                    </h3>
+                    <div className="flex gap-2 py-1">
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          recording.status === 'published'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        {recording.status === 'published'
+                          ? 'опубликовано'
+                          : 'скрыто'}
+                      </span>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          recording.type === 'live'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-blue-100 text-primary'
+                        }`}
+                      >
+                        {recording.type === 'live' ? 'прямой эфир' : 'подкаст'}
+                      </span>
+                    </div>
+                  </div>
+                  {recording.description && (
+                    <p className="text-gray-600 mb-2">
+                      {recording.description}
+                    </p>
+                  )}
+                  <div className="text-sm text-gray-500 space-y-1">
+                    <p>
+                      дата выхода:{' '}
+                      {new Date(recording.releaseDate).toLocaleDateString(
+                        'ru-RU',
+                      )}
+                    </p>
+                    {recording.duration && (
+                      <p>длительность: {formatDuration(recording.duration)}</p>
+                    )}
+                    {recording.keywords && (
+                      <p>ключевые слова: {recording.keywords}</p>
+                    )}
+                  </div>
+                </div>
 
-								<div className='flex flex-col justify-between ml-4'>
-									<div className='flex space-x-3 ml-4'>
-										<button
-											onClick={() => {
-												setIsCreating(false)
-												setEditingId(recording.id)
-											}}
-											className='text-primary hover:text-primary-hover/80'
-											disabled={isPending}
-										>
-											<Edit />
-										</button>
-										{user.data?.user.role === 'admin' && (
-											<button
-												onClick={() => handleDelete(recording.id)}
-												className='text-red-600 hover:text-red-800 disabled:opacity-50'
-												disabled={isPending}
-											>
-												<Trash />
-											</button>
-										)}
-									</div>
-									<div className='grow'></div>
-									<div className='text-right'>
-										<RecordingDownload fileUrl={recording.fileUrl} />
-									</div>
-								</div>
-							</div>
-						)}
-					</Card>
-				))}
+                <div className="flex flex-col justify-between ml-4">
+                  <div className="flex space-x-3 ml-4">
+                    <button
+                      onClick={() => {
+                        setIsCreating(false)
+                        setEditingId(recording.id)
+                      }}
+                      className="text-primary hover:text-primary-hover/80"
+                      disabled={isPending}
+                    >
+                      <Edit />
+                    </button>
+                    {user.data?.user.role === 'admin' && (
+                      <button
+                        onClick={() => handleDelete(recording.id)}
+                        className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                        disabled={isPending}
+                      >
+                        <Trash />
+                      </button>
+                    )}
+                  </div>
+                  <div className="grow"></div>
+                  <div className="text-right">
+                    <RecordingDownload fileUrl={recording.fileUrl} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </Card>
+        ))}
 
-				{filteredRecordings.length === 0 && (
-					<p className='text-muted-foreground text-center py-8'>
-						{recordings.length === 0
-							? 'нет файлов'
-							: 'нет файлов, соответствующих фильтрам'}
-					</p>
-				)}
-			</div>
-		</div>
-	)
+        {filteredRecordings.length === 0 && (
+          <p className="text-muted-foreground text-center py-8">
+            {recordings.length === 0
+              ? 'нет файлов'
+              : 'нет файлов, соответствующих фильтрам'}
+          </p>
+        )}
+      </div>
+    </div>
+  )
 }
