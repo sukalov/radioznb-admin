@@ -1,4 +1,4 @@
-import { eq, InferInsertModel, InferSelectModel, isNotNull } from 'drizzle-orm'
+import { eq, InferInsertModel, InferSelectModel, sql } from 'drizzle-orm'
 import {
   check,
   integer,
@@ -84,8 +84,8 @@ export const recordings = sqliteTable(
   },
   (table) => [
     check(
-      'seasonEpisodeNumberConsistency',
-      eq(isNotNull(table.seasonNumber), isNotNull(table.episodeNumber)),
+      'seasonRequiresEpisode',
+      sql`(${table.seasonNumber} IS NULL OR ${table.episodeNumber} IS NOT NULL)`,
     ),
   ],
 )

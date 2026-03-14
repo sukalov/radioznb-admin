@@ -472,6 +472,8 @@ export async function getRecordings() {
         id: recordings.id,
         programId: recordings.programId,
         episodeTitle: recordings.episodeTitle,
+        episodeNumber: recordings.episodeNumber,
+        seasonNumber: recordings.seasonNumber,
         description: recordings.description,
         type: recordings.type,
         releaseDate: recordings.releaseDate,

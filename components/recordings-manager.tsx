@@ -4,7 +4,7 @@ import { Edit, Trash } from 'lucide-react'
 import { useState, useEffect, useTransition, useMemo } from 'react'
 import { toast } from 'sonner'
 import { deleteRecordingWithRelations } from '@/lib/form-actions'
-import type { Recording } from '@/db/schema'
+import type { Program, Recording } from '@/db/schema'
 import { getRecordings } from '@/lib/actions'
 import RecordingDownload from './recording-download'
 import RecordingsForm from './recordings-form'
@@ -12,6 +12,7 @@ import AddButton from './add-button'
 import { Card } from './ui/card'
 import { useSession } from 'next-auth/react'
 import { useFilters } from '@/contexts/filter-context'
+import { getRecordingSeasonEpisodeString } from '@/lib/utils'
 
 type RecordingWithProgram = Recording & {
   program?: string | null
@@ -33,7 +34,7 @@ export function RecordingsManager() {
     try {
       const result = await getRecordings()
       if (result.success) {
-        setRecordings(result.data!)
+        setRecordings(result?.data!)
       } else {
         toast.error(result.error)
       }
@@ -205,7 +206,13 @@ export function RecordingsManager() {
             {editingId === recording.id ? (
               <div>
                 <h3 className="text-lg font-medium mb-4">
-                  {`${recording.program} – ${recording.episodeTitle}`}
+                  {[
+                    recording.program,
+                    getRecordingSeasonEpisodeString(recording),
+                    recording.episodeTitle,
+                  ]
+                    .filter(Boolean)
+                    .join(' – ')}
                 </h3>
                 <RecordingsForm
                   editingId={recording.id}
@@ -216,32 +223,38 @@ export function RecordingsManager() {
             ) : (
               <div className="flex justify-between items-stretch">
                 <div className="flex-1">
+                  <div className="flex gap-2 pb-2 w-full items-center justify-start">
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        recording.status === 'published'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
+                      {recording.status === 'published'
+                        ? 'опубликовано'
+                        : 'скрыто'}
+                    </span>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        recording.type === 'live'
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-blue-100 text-primary'
+                      }`}
+                    >
+                      {recording.type === 'live' ? 'прямой эфир' : 'подкаст'}
+                    </span>
+                  </div>
                   <div className="flex items-center space-x-2 mb-2 flex-col sm:flex-row">
                     <h3 className="text-lg font-medium">
-                      {`${recording.program} – ${recording.episodeTitle}`}
+                      {[
+                        recording.program,
+                        getRecordingSeasonEpisodeString(recording),
+                        recording.episodeTitle,
+                      ]
+                        .filter(Boolean)
+                        .join(' – ')}
                     </h3>
-                    <div className="flex gap-2 py-1">
-                      <span
-                        className={`px-2 py-1 text-xs rounded-full ${
-                          recording.status === 'published'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                      >
-                        {recording.status === 'published'
-                          ? 'опубликовано'
-                          : 'скрыто'}
-                      </span>
-                      <span
-                        className={`px-2 py-1 text-xs rounded-full ${
-                          recording.type === 'live'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-blue-100 text-primary'
-                        }`}
-                      >
-                        {recording.type === 'live' ? 'прямой эфир' : 'подкаст'}
-                      </span>
-                    </div>
                   </div>
                   {recording.description && (
                     <p className="text-gray-600 mb-2">
@@ -255,7 +268,7 @@ export function RecordingsManager() {
                         'ru-RU',
                       )}
                     </p>
-                    {recording.duration && (
+                    {recording.duration != null && recording.duration > 0 && (
                       <p>длительность: {formatDuration(recording.duration)}</p>
                     )}
                     {recording.keywords && (
@@ -264,7 +277,7 @@ export function RecordingsManager() {
                   </div>
                 </div>
 
-                <div className="flex flex-col justify-between ml-4">
+                <div className="flex flex-col justify-between">
                   <div className="flex space-x-3 ml-4">
                     <button
                       onClick={() => {

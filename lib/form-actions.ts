@@ -22,8 +22,8 @@ export type RecordingFormData = {
   programId: string
   episodeTitle: string
   description?: string
-  seasonNumber?: number
-  episodeNumber?: number
+  seasonNumber: number | null
+  episodeNumber: number | null
   type: 'live' | 'podcast'
   releaseDate: Date
   duration: number
@@ -56,12 +56,23 @@ export async function createRecordingWithRelations(
       }
     }
 
+    const hasEpisode =
+      formData.episodeNumber != null && Number.isFinite(formData.episodeNumber)
+    const hasSeason =
+      formData.seasonNumber != null && Number.isFinite(formData.seasonNumber)
+    // season requires episode (DB constraint); episode can be set alone
+    const episodeNumber = hasEpisode ? formData.episodeNumber : null
+    const seasonNumber =
+      hasEpisode && hasSeason ? formData.seasonNumber : null
+
     // create recording
     const [recording] = await db
       .insert(recordings)
       .values({
         programId: formData.programId,
         episodeTitle: formData.episodeTitle,
+        episodeNumber,
+        seasonNumber,
         description: formData.description || null,
         type: formData.type,
         releaseDate: formData.releaseDate,
@@ -133,12 +144,22 @@ export async function updateRecordingWithRelations(
       }
     }
 
+    const hasEpisode =
+      formData.episodeNumber != null && Number.isFinite(formData.episodeNumber)
+    const hasSeason =
+      formData.seasonNumber != null && Number.isFinite(formData.seasonNumber)
+    const episodeNumber = hasEpisode ? formData.episodeNumber : null
+    const seasonNumber =
+      hasEpisode && hasSeason ? formData.seasonNumber : null
+
     // update recording
     await db
       .update(recordings)
       .set({
         programId: formData.programId,
         episodeTitle: formData.episodeTitle,
+        episodeNumber,
+        seasonNumber,
         description: formData.description || null,
         type: formData.type,
         releaseDate: formData.releaseDate,

@@ -29,8 +29,8 @@ export default function RecordingsForm({
     programId: '',
     episodeTitle: '',
     description: '',
-    episodeNumber: undefined,
-    seasonNumber: undefined,
+    episodeNumber: null,
+    seasonNumber: null,
     type: 'live',
     releaseDate: new Date(),
     duration: 0,
@@ -87,6 +87,14 @@ export default function RecordingsForm({
         setFormData({
           programId: recording.programId,
           episodeTitle: recording.episodeTitle,
+          episodeNumber:
+            recording.episodeNumber != null && Number.isFinite(recording.episodeNumber)
+              ? recording.episodeNumber
+              : null,
+          seasonNumber:
+            recording.seasonNumber != null && Number.isFinite(recording.seasonNumber)
+              ? recording.seasonNumber
+              : null,
           description: recording.description || '',
           type: recording.type,
           releaseDate: recording.releaseDate,
@@ -240,6 +248,8 @@ export default function RecordingsForm({
             programId: '',
             episodeTitle: '',
             description: '',
+            episodeNumber: null,
+            seasonNumber: null,
             type: 'live',
             releaseDate: new Date(),
             duration: 0,
@@ -268,6 +278,8 @@ export default function RecordingsForm({
       programId: '',
       episodeTitle: '',
       description: '',
+      episodeNumber: null,
+      seasonNumber: null,
       type: 'live',
       releaseDate: new Date(),
       duration: 0,
@@ -350,13 +362,19 @@ export default function RecordingsForm({
                 <input
                   type="number"
                   min={1}
-                  value={formData.seasonNumber?.toString()}
-                  onChange={(e) =>
+                  value={formData.seasonNumber ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value
+                    const n =
+                      v === ''
+                        ? null
+                        : (parseInt(v, 10) as number)
                     setFormData({
                       ...formData,
-                      seasonNumber: parseInt(e.target.value),
+                      seasonNumber:
+                        n !== null && !Number.isNaN(n) ? n : null,
                     })
-                  }
+                  }}
                   className="w-16 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
@@ -368,13 +386,19 @@ export default function RecordingsForm({
               <input
                 type="number"
                 min={0}
-                value={formData.episodeNumber?.toString()}
-                onChange={(e) =>
+                value={formData.episodeNumber ?? ''}
+                onChange={(e) => {
+                  const v = e.target.value
+                  const n =
+                    v === ''
+                      ? null
+                      : (parseInt(v, 10) as number)
                   setFormData({
                     ...formData,
-                    episodeNumber: parseInt(e.target.value),
+                    episodeNumber:
+                      n !== null && !Number.isNaN(n) ? n : null,
                   })
-                }
+                }}
                 className="w-16 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
