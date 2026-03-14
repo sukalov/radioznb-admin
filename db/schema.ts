@@ -78,7 +78,7 @@ export const recordings = sqliteTable(
     status: text('status', { enum: ['published', 'hidden'] }).notNull(),
     keywords: text('keywords'),
     fileUrl: text('fileUrl').notNull().unique(),
-    addedAt: integer('createdAt', { mode: 'timestamp' })
+    createdAt: integer('createdAt', { mode: 'timestamp' })
       .$defaultFn(() => new Date())
       .notNull(),
   },

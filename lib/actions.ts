@@ -481,7 +481,7 @@ export async function getRecordings() {
         status: recordings.status,
         keywords: recordings.keywords,
         fileUrl: recordings.fileUrl,
-        addedAt: recordings.addedAt,
+        createdAt: recordings.createdAt,
         program: programs.name,
       })
       .from(recordings)
