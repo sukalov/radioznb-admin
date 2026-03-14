@@ -341,39 +341,43 @@ export default function RecordingsForm({
               ))}
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              сезон
-            </label>
-            <input
-              type="number"
-              min={1}
-              value={formData.seasonNumber?.toString()}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  seasonNumber: parseInt(e.target.value),
-                })
-              }
-              className="w-16 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              серия
-            </label>
-            <input
-              type="number"
-              min={0}
-              value={formData.episodeNumber?.toString()}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  episodeNumber: parseInt(e.target.value),
-                })
-              }
-              className="w-16 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+          <div className="flex gap-2">
+            <div>
+              <div>
+                <label className="block text-sm font-medium text-gray-500 mb-1">
+                  сезон
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  value={formData.seasonNumber?.toString()}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      seasonNumber: parseInt(e.target.value),
+                    })
+                  }
+                  className="w-16 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-500 mb-1">
+                серия
+              </label>
+              <input
+                type="number"
+                min={0}
+                value={formData.episodeNumber?.toString()}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    episodeNumber: parseInt(e.target.value),
+                  })
+                }
+                className="w-16 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
           </div>
         </div>
         <div className="col-span-2">
