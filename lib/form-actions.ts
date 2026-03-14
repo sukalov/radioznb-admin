@@ -22,6 +22,8 @@ export type RecordingFormData = {
   programId: string
   episodeTitle: string
   description?: string
+  seasonNumber?: number
+  episodeNumber?: number
   type: 'live' | 'podcast'
   releaseDate: Date
   duration: number

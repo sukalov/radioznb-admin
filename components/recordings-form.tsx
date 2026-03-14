@@ -29,6 +29,8 @@ export default function RecordingsForm({
     programId: '',
     episodeTitle: '',
     description: '',
+    episodeNumber: undefined,
+    seasonNumber: undefined,
     type: 'live',
     releaseDate: new Date(),
     duration: 0,
@@ -318,28 +320,63 @@ export default function RecordingsForm({
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 min-h-1/2">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            передача *
-          </label>
-          <select
-            required
-            value={formData.programId}
-            onChange={(e) =>
-              setFormData({ ...formData, programId: e.target.value })
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-          >
-            <option value="">выберите программу</option>
-            {programs.map((program) => (
-              <option key={program.id} value={program.id}>
-                {program.name}
-              </option>
-            ))}
-          </select>
+        <div className="col-span-2 flex gap-4">
+          <div className="w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              передача *
+            </label>
+            <select
+              required
+              value={formData.programId}
+              onChange={(e) =>
+                setFormData({ ...formData, programId: e.target.value })
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="">выберите программу</option>
+              {programs.map((program) => (
+                <option key={program.id} value={program.id}>
+                  {program.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              сезон
+            </label>
+            <input
+              type="number"
+              min={1}
+              value={formData.seasonNumber?.toString()}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  seasonNumber: parseInt(e.target.value),
+                })
+              }
+              className="w-16 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              серия
+            </label>
+            <input
+              type="number"
+              min={0}
+              value={formData.episodeNumber?.toString()}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  episodeNumber: parseInt(e.target.value),
+                })
+              }
+              className="w-16 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
         </div>
-
-        <div>
+        <div className="col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             название выпуска *
           </label>
@@ -353,7 +390,6 @@ export default function RecordingsForm({
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             тип *
